@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathMaster - Luyện Tập Toán Online Cấp 1 & Cấp 2</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        /* Smooth transitions */
+        .tab-btn, .grade-btn, .topic-card, .btn-action {
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Glassmorphism elements */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Pulse animation for timer */
+        @keyframes timerPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); color: #ef4444; }
+        }
+        .timer-warning {
+            animation: timerPulse 1s infinite;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="App.navigateTo('dashboard')">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white font-black text-xl shadow-md shadow-indigo-200">
+                        <i class="fa-solid font-bold fa-calculator"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">MathMaster</span>
+                        <span class="hidden sm:inline-block text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100 ml-2">Cấp 1 & 2</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="hidden md:flex items-center gap-2">
+                    <button onclick="App.navigateTo('dashboard')" id="nav-dashboard" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold text-indigo-600 bg-indigo-50">
+                        <i class="fa-solid fa-house mr-1.5"></i> Trang Chủ
+                    </button>
+                    <button onclick="App.navigateTo('practice-select')" id="nav-practice" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-indigo-600 hover:bg-slate-50">
+                        <i class="fa-solid fa-gamepad mr-1.5"></i> Luyện Tập
+                    </button>
+                    <button onclick="App.navigateTo('stats')" id="nav-stats" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-indigo-600 hover:bg-slate-50">
+                        <i class="fa-solid fa-chart-pie mr-1.5"></i> Thống Kê
+                    </button>
+                    <button onclick="App.navigateTo('achievements')" id="nav-achievements" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-indigo-600 hover:bg-slate-50">
+                        <i class="fa-solid fa-trophy mr-1.5"></i> Thành Tích
+                    </button>
+                </nav>
+
+                <!-- User Stats Header Widget -->
+                <div class="flex items-center gap-3">
+                    <!-- Streak -->
+                    <div class="flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-700 px-3 py-1.5 rounded-xl font-bold text-sm" title="Chuỗi ngày luyện tập">
+                        <i class="fa-solid fa-fire text-amber-500 animate-bounce"></i>
+                        <span id="user-streak-display">0</span>
+                    </div>
+                    <!-- Level & XP -->
+                    <div class="hidden sm:flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-xl text-sm font-bold text-indigo-700">
+                        <i class="fa-solid fa-star text-amber-400"></i>
+                        <span>Lv.<span id="user-level-display">1</span></span>
+                        <span class="text-indigo-300">|</span>
+                        <span id="user-xp-display" class="text-xs text-indigo-600">0 XP</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+
+        <!-- VIEW 1: DASHBOARD / OVERVIEW -->
+        <section id="view-dashboard" class="view-section space-y-6">
+            <!-- Hero Banner -->
+            <div class="rounded-3xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-violet-700 text-white p-6 sm:p-10 shadow-xl relative overflow-hidden">
+                <div class="absolute right-0 top-0 bottom-0 opacity-10 pointer-events-none flex items-center pr-10">
+                    <i class="fa-solid fa-square-root-variable text-[240px]"></i>
+                </div>
+                <div class="relative z-10 max-w-2xl">
+                    <span class="bg-white/20 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Học Toán Thông Minh</span>
+                    <h1 class="text-2xl sm:text-4xl font-extrabold mt-3 mb-2 leading-tight">Chinh phục môn Toán mỗi ngày!</h1>
+                    <p class="text-indigo-100 text-sm sm:text-base mb-6">Hơn 500+ dạng bài tập sinh tự động từ Lớp 1 đến Lớp 9. Luyện phản xạ tính nhẩm và rèn tư duy đại số, hình học.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="App.startQuickPractice('primary')" class="px-5 py-3 bg-white text-indigo-700 font-bold rounded-2xl hover:bg-slate-100 shadow-md transition flex items-center gap-2">
+                            <i class="fa-solid fa-child text-pink-500"></i> Cấp 1 (Lớp 1-5)
+                        </button>
+                        <button onclick="App.startQuickPractice('secondary')" class="px-5 py-3 bg-indigo-500/50 hover:bg-indigo-500 border border-indigo-300/40 text-white font-bold rounded-2xl shadow-md transition flex items-center gap-2">
+                            <i class="fa-solid fa-graduation-cap text-yellow-300"></i> Cấp 2 (Lớp 6-9)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fast Selection Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Primary School Card -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl font-bold">
+                            <i class="fa-solid fa-cubes"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800">Khối Tiểu Học (Cấp 1)</h2>
+                            <p class="text-xs text-slate-500">Nền tảng tính toán, phép tính cơ bản & toán có lời văn</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-5 gap-2">
+                        <button onclick="App.selectGrade(1)" class="py-2.5 rounded-xl border border-slate-200 hover:border-amber-400 hover:bg-amber-50 font-semibold text-slate-700 text-sm transition text-center">Lớp 1</button>
+                        <button onclick="App.selectGrade(2)" class="py-2.5 rounded-xl border border-slate-200 hover:border-amber-400 hover:bg-amber-50 font-semibold text-slate-700 text-sm transition text-center">Lớp 2</button>
+                        <button onclick="App.selectGrade(3)" class="py-2.5 rounded-xl border border-slate-200 hover:border-amber-400 hover:bg-amber-50 font-semibold text-slate-700 text-sm transition text-center">Lớp 3</button>
+                        <button onclick="App.selectGrade(4)" class="py-2.5 rounded-xl border border-slate-200 hover:border-amber-400 hover:bg-amber-50 font-semibold text-slate-700 text-sm transition text-center">Lớp 4</button>
+                        <button onclick="App.selectGrade(5)" class="py-2.5 rounded-xl border border-slate-200 hover:border-amber-400 hover:bg-amber-50 font-semibold text-slate-700 text-sm transition text-center">Lớp 5</button>
+                    </div>
+                </div>
+
+                <!-- Secondary School Card -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl font-bold">
+                            <i class="fa-solid fa-atom"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800">Khối THCS (Cấp 2)</h2>
+                            <p class="text-xs text-slate-500">Số nguyên, đại số, hình học & phương trình</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="App.selectGrade(6)" class="py-2.5 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 font-semibold text-slate-700 text-sm transition text-center">Lớp 6</button>
+                        <button onclick="App.selectGrade(7)" class="py-2.5 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 font-semibold text-slate-700 text-sm transition text-center">Lớp 7</button>
+                        <button onclick="App.selectGrade(8)" class="py-2.5 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 font-semibold text-slate-700 text-sm transition text-center">Lớp 8</button>
+                        <button onclick="App.selectGrade(9)" class="py-2.5 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 font-semibold text-slate-700 text-sm transition text-center">Lớp 9</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats Summary -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg"><i class="fa-solid fa-circle-check"></i></div>
+                    <div>
+                        <div class="text-xs text-slate-500 font-medium">Bài đã giải</div>
+                        <div id="dash-total-solved" class="text-lg font-bold text-slate-800">0</div>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-bullseye"></i></div>
+                    <div>
+                        <div class="text-xs text-slate-500 font-medium">Tỷ lệ chính xác</div>
+                        <div id="dash-accuracy" class="text-lg font-bold text-slate-800">0%</div>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-lg"><i class="fa-solid fa-award"></i></div>
+                    <div>
+                        <div class="text-xs text-slate-500 font-medium">Danh hiệu đạt được</div>
+                        <div id="dash-badge-count" class="text-lg font-bold text-slate-800">0/6</div>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg"><i class="fa-solid fa-bolt"></i></div>
+                    <div>
+                        <div class="text-xs text-slate-500 font-medium">Chuỗi cao nhất</div>
+                        <div id="dash-best-streak" class="text-lg font-bold text-slate-800">0</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: PRACTICE SELECTION (GRADE & TOPICS) -->
+        <section id="view-practice-select" class="view-section hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800">Chọn Chủ Đề Luyện Tập</h1>
+                    <p class="text-sm text-slate-500">Tùy chỉnh khối lớp và nội dung toán học phù hợp</p>
+                </div>
+                <!-- Grade Filter Tabs -->
+                <div id="grade-selector-tabs" class="flex flex-wrap gap-1 bg-slate-200/70 p-1 rounded-2xl max-w-full overflow-x-auto">
+                    <!-- Dynamic tabs populated via JS -->
+                </div>
+            </div>
+
+            <!-- Mode Selection Options -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div onclick="App.setMode('free')" id="mode-card-free" class="cursor-pointer border-2 border-indigo-600 bg-indigo-50/50 p-4 rounded-2xl flex items-center gap-4 transition">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xl font-bold shadow-md">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800">Chế độ Tự Do</h3>
+                        <p class="text-xs text-slate-600">Không giới hạn thời gian, có gợi ý & hướng dẫn giải từng bước.</p>
+                    </div>
+                </div>
+                <div onclick="App.setMode('timed')" id="mode-card-timed" class="cursor-pointer border-2 border-slate-200 hover:border-indigo-300 p-4 rounded-2xl flex items-center gap-4 transition">
+                    <div class="w-12 h-12 rounded-xl bg-rose-500 text-white flex items-center justify-center text-xl font-bold shadow-md">
+                        <i class="fa-solid fa-stopwatch"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800">Thử Thách Tính Giờ (60s)</h3>
+                        <p class="text-xs text-slate-600">Thách thức phản xạ, nhân đôi XP, tính điểm Streak Combo.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topics Grid -->
+            <div>
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-indigo-600"></i> Các dạng toán thuộc <span id="current-selected-grade-label" class="text-indigo-600">Lớp 1</span>
+                </h2>
+                <div id="topics-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Topic Cards dynamically inserted -->
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: PRACTICE ROOM (QUESTION WORKSPACE) -->
+        <section id="view-practice-room" class="view-section hidden max-w-3xl mx-auto space-y-6">
+            <!-- Room Top Control Bar -->
+            <div class="flex items-center justify-between glass-card p-4 rounded-2xl border border-slate-200">
+                <button onclick="App.exitPractice()" class="text-slate-500 hover:text-slate-800 font-semibold text-sm flex items-center gap-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-100 transition">
+                    <i class="fa-solid fa-arrow-left"></i> Thoát
+                </button>
+
+                <!-- Status Info / Timer -->
+                <div class="flex items-center gap-4">
+                    <span id="practice-grade-badge" class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">Lớp 1</span>
+                    <div id="timer-box" class="hidden flex items-center gap-1.5 font-mono text-base font-extrabold text-slate-700 bg-rose-50 border border-rose-200 px-3 py-1 rounded-xl">
+                        <i class="fa-solid fa-clock text-rose-500"></i>
+                        <span id="timer-counter">60</span>s
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-md border border-slate-200/90 relative overflow-hidden">
+                <!-- Question Metadata -->
+                <div class="flex justify-between items-center mb-6 text-xs text-slate-500 font-semibold border-b border-slate-100 pb-3">
+                    <span id="question-topic-name"><i class="fa-solid fa-tag text-indigo-500 mr-1"></i> Tính nhẩm</span>
+                    <span id="question-score-multiplier" class="text-amber-600"><i class="fa-solid fa-bolt mr-1"></i> +10 XP</span>
+                </div>
+
+                <!-- Main Problem Display -->
+                <div class="text-center py-4">
+                    <div id="question-text" class="text-2xl sm:text-4xl font-extrabold text-slate-800 tracking-wide leading-relaxed">
+                        12 + 15 = ?
+                    </div>
+                    <div id="question-subtext" class="text-slate-500 text-sm mt-2 hidden">
+                        <!-- Extra info/instructions for word problems -->
+                    </div>
+                </div>
+
+                <!-- Dynamic Answer Inputs / Options -->
+                <div id="answer-container" class="mt-8">
+                    <!-- Standard Input or Multiple Choice rendered here -->
+                </div>
+
+                <!-- Solution Box (Hidden initially) -->
+                <div id="solution-box" class="hidden mt-6 p-4 rounded-2xl bg-indigo-50 border border-indigo-200 text-sm space-y-2">
+                    <div class="font-bold text-indigo-900 flex items-center gap-2">
+                        <i class="fa-solid fa-lightbulb text-amber-500"></i> Hướng dẫn chi tiết:
+                    </div>
+                    <div id="solution-text" class="text-indigo-950 font-medium leading-relaxed">
+                        <!-- Step-by-step math explanation -->
+                    </div>
+                </div>
+
+                <!-- Action Button Bar -->
+                <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                    <button id="btn-submit-answer" onclick="App.checkAnswer()" class="flex-grow py-3.5 px-6 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold rounded-2xl shadow-lg shadow-indigo-200 transition text-center">
+                        Kiểm Tra Đáp Án
+                    </button>
+                    <button id="btn-next-question" onclick="App.nextQuestion()" class="hidden flex-grow py-3.5 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-lg shadow-emerald-200 transition text-center">
+                        Câu Tiếp Theo <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                    <button id="btn-show-hint" onclick="App.toggleHint()" class="py-3.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-2xl transition flex items-center justify-center gap-1.5" title="Xem hướng dẫn giải">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> Gợi ý
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: STATISTICS & ANALYTICS -->
+        <section id="view-stats" class="view-section hidden space-y-6">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">Thống Kê Tiến Độ Học Tập</h1>
+                <p class="text-sm text-slate-500">Báo cáo chi tiết về năng lực giải toán và tiến bộ của bạn</p>
+            </div>
+
+            <!-- Stats Overview Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 text-center">
+                    <div class="text-3xl font-black text-indigo-600 mb-1" id="stats-solved-count">0</div>
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tổng Bài Đã Làm</div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 text-center">
+                    <div class="text-3xl font-black text-emerald-500 mb-1" id="stats-correct-count">0</div>
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Bài Trả Lời Đúng</div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 text-center">
+                    <div class="text-3xl font-black text-amber-500 mb-1" id="stats-accuracy-rate">0%</div>
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tỷ Lệ Chính Xác</div>
+                </div>
+            </div>
+
+            <!-- Grade Breakdown Progress -->
+            <div class="glass-card rounded-2xl p-6 border border-slate-200 space-y-4">
+                <h3 class="font-bold text-slate-800 text-base">Đánh giá theo Khối Lớp</h3>
+                <div id="stats-grade-breakdown" class="space-y-3">
+                    <!-- Progress bars dynamically injected -->
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 5: ACHIEVEMENTS & BADGES -->
+        <section id="view-achievements" class="view-section hidden space-y-6">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">Huy Hiệu & Danh Hiệu</h1>
+                <p class="text-sm text-slate-500">Hoàn thành các cột mốc để mở khóa phần thưởng cao quý!</p>
+            </div>
+
+            <div id="badges-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <!-- Badges populated dynamically -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            MathMaster © 2026 - Ứng Dụng Luyện Tập Toán Online Tương Tác Cấp 1 & Cấp 2
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC ENGINE -->
+    <script>
+        /**
+         * MATHMASTER APPLICATION MODULE PATTERN
+         * Contains State, Generator, Evaluator, UserProgress & UI controllers
+         */
+
+        // ==========================================
+        // 1. STATE & USER STORAGE SYSTEM
+        // ==========================================
+        const Storage = {
+            KEY: 'mathmaster_user_data_v1',
+            getDefault() {
+                return {
+                    xp: 0,
+                    level: 1,
+                    streak: 1,
+                    lastActiveDate: new Date().toISOString().split('T')[0],
+                    totalSolved: 0,
+                    correctSolved: 0,
+                    bestStreak: 0,
+                    topicStats: {}, // { topicId: { solved: 0, correct: 0 } }
+                    badges: ['welcome']
+                };
+            },
+            load() {
+                const data = localStorage.getItem(this.KEY);
+                if (!data) return this.getDefault();
+                try {
+                    const parsed = JSON.parse(data);
+                    // Check streak logic
+                    const today = new Date().toISOString().split('T')[0];
+                    const last = new Date(parsed.lastActiveDate || today);
+                    const diffDays = Math.floor((new Date(today) - last) / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDays === 1) {
+                        // Continued streak
+                    } else if (diffDays > 1) {
+                        parsed.streak = 1; // Reset streak if missed days
+                    }
+                    parsed.lastActiveDate = today;
+                    return { ...this.getDefault(), ...parsed };
+                } catch(e) {
+                    return this.getDefault();
+                }
+            },
+            save(data) {
+                localStorage.setItem(this.KEY, JSON.stringify(data));
+            }
+        };
+
+        // ==========================================
+        // 2. MATH PROBLEM GENERATOR ENGINE
+        // ==========================================
+        const MathGenerator = {
+            // Helper utilities
+            randInt(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            },
+            gcd(a, b) {
+                return b === 0 ? a : this.gcd(b, a % b);
+            },
+
+            // Generator Map by Topic Key
+            generators: {
+                // --- GRADE 1 ---
+                'g1_add_sub': () => {
+                    const isAdd = Math.random() > 0.4;
+                    if (isAdd) {
+                        const a = MathGenerator.randInt(1, 10);
+                        const b = MathGenerator.randInt(1, 10);
+                        return {
+                            question: `${a} + ${b} = ?`,
+                            answer: (a + b).toString(),
+                            options: MathGenerator.generateOptions(a + b),
+                            solution: `Thực hiện phép cộng ngón tay hoặc đếm tiến: Lấy ${a} cộng thêm ${b} đơn vị ta được ${a + b}.`
+                        };
+                    } else {
+                        const a = MathGenerator.randInt(5, 20);
+                        const b = MathGenerator.randInt(1, a);
+                        return {
+                            question: `${a} - ${b} = ?`,
+                            answer: (a - b).toString(),
+                            options: MathGenerator.generateOptions(a - b),
+                            solution: `Thực hiện phép trừ: Lấy ${a} bớt đi ${b} đơn vị còn lại ${a - b}.`
+                        };
+                    }
+                },
+                'g1_compare': () => {
+                    const a = MathGenerator.randInt(1, 50);
+                    const b = MathGenerator.randInt(1, 50);
+                    const ans = a > b ? '>' : (a < b ? '<' : '=');
+                    return {
+                        question: `Điền dấu thích hợp: ${a}  ___  ${b}`,
+                        type: 'choice',
+                        options: ['>', '<', '='],
+                        answer: ans,
+                        solution: `So sánh hai số: Số ${a} ${a > b ? 'lớn hơn' : (a < b ? 'nhỏ hơn' : 'bằng')} số ${b}.`
+                    };
+                },
+
+                // --- GRADE 2 ---
+                'g2_mental_mul': () => {
+                    const a = MathGenerator.randInt(2, 5);
+                    const b = MathGenerator.randInt(1, 10);
+                    return {
+                        question: `${a} × ${b} = ?`,
+                        answer: (a * b).toString(),
+                        options: MathGenerator.generateOptions(a * b),
+                        solution: `Bảng cửu chương ${a}: ${a} nhân ${b} bằng ${a * b}.`
+                    };
+                },
+                'g2_find_x': () => {
+                    const x = MathGenerator.randInt(5, 30);
+                    const a = MathGenerator.randInt(5, 20);
+                    const sum = x + a;
+                    return {
+                        question: `Tìm X:  X + ${a} = ${sum}`,
+                        answer: x.toString(),
+                        options: MathGenerator.generateOptions(x),
+                        solution: `Muốn tìm số hạng chưa biết (X), ta lấy Tổng trừ đi số hạng đã biết: X = ${sum} - ${a} = ${x}.`
+                    };
+                },
+
+                // --- GRADE 3 ---
+                'g3_mul_div': () => {
+                    const isMul = Math.random() > 0.5;
+                    if (isMul) {
+                        const a = MathGenerator.randInt(6, 9);
+                        const b = MathGenerator.randInt(3, 9);
+                        return {
+                            question: `${a} × ${b} = ?`,
+                            answer: (a * b).toString(),
+                            options: MathGenerator.generateOptions(a * b),
+                            solution: `Áp dụng bảng nhân ${a}: ${a} × ${b} = ${a * b}.`
+                        };
+                    } else {
+                        const b = MathGenerator.randInt(2, 9);
+                        const ans = MathGenerator.randInt(3, 9);
+                        const a = b * ans;
+                        return {
+                            question: `${a} : ${b} = ?`,
+                            answer: ans.toString(),
+                            options: MathGenerator.generateOptions(ans),
+                            solution: `Phép chia là phép ngược của phép nhân: Vì ${b} × ${ans} = ${a} nên ${a} : ${b} = ${ans}.`
+                        };
+                    }
+                },
+                'g3_word_prob': () => {
+                    const items = ['quyển vở', 'viên bi', 'quả táo', 'cây bút'];
+                    const name = ['An', 'Bình', 'Chi', 'Dũng'][MathGenerator.randInt(0, 3)];
+                    const item = items[MathGenerator.randInt(0, items.length - 1)];
+                    const count = MathGenerator.randInt(3, 8);
+                    const each = MathGenerator.randInt(4, 9);
+                    const total = count * each;
+                    return {
+                        question: `${name} có ${count} hộp ${item}, mỗi hộp chứa ${each} ${item}. Hỏi ${name} có tất cả bao nhiêu ${item}?`,
+                        answer: total.toString(),
+                        options: MathGenerator.generateOptions(total),
+                        solution: `Số ${item} ${name} có tất cả là: ${count} × ${each} = ${total} (${item}).`
+                    };
+                },
+
+                // --- GRADE 4 ---
+                'g4_fractions_basic': () => {
+                    const denom = MathGenerator.randInt(3, 9);
+                    const num1 = MathGenerator.randInt(1, denom - 1);
+                    const num2 = MathGenerator.randInt(1, denom - 1);
+                    const sum = num1 + num2;
+                    return {
+                        question: `Tính: ${num1}/${denom} + ${num2}/${denom} = ?`,
+                        answer: `${sum}/${denom}`,
+                        options: [`${sum}/${denom}`, `${sum}/${denom * 2}`, `${num1 * num2}/${denom}`, `${sum + 1}/${denom}`],
+                        solution: `Cùng mẫu số (${denom}): Ta giữ nguyên mẫu số và cộng các tử số với nhau: (${num1} + ${num2}) / ${denom} = ${sum}/${denom}.`
+                    };
+                },
+
+                // --- GRADE 5 ---
+                'g5_decimals': () => {
+                    const a = (MathGenerator.randInt(10, 99) / 10);
+                    const b = (MathGenerator.randInt(10, 99) / 10);
+                    const ans = (a + b).toFixed(1);
+                    return {
+                        question: `Tính: ${a} + ${b} = ?`,
+                        answer: ans,
+                        options: MathGenerator.generateOptions(parseFloat(ans), true),
+                        solution: `Đặt tính rồi cộng hai số thập phân thẳng cột dấu phẩy: ${a} + ${b} = ${ans}.`
+                    };
+                },
+
+                // --- GRADE 6 (SECONDARY) ---
+                'g6_integers': () => {
+                    const a = MathGenerator.randInt(-20, -1);
+                    const b = MathGenerator.randInt(5, 25);
+                    const ans = a + b;
+                    return {
+                        question: `Tính giá trị biểu thức: (${a}) + ${b} = ?`,
+                        answer: ans.toString(),
+                        options: MathGenerator.generateOptions(ans),
+                        solution: `Cộng hai số nguyên trái dấu: Ta lấy số có giá trị tuyệt đối lớn hơn trừ số nhỏ hơn và mang dấu của số lớn hơn: ${b} - ${Math.abs(a)} = ${ans}.`
+                    };
+                },
+
+                // --- GRADE 7 ---
+                'g7_algebra_1': () => {
+                    // ax + b = c
+                    const a = MathGenerator.randInt(2, 6);
+                    const x = MathGenerator.randInt(-5, 10);
+                    const b = MathGenerator.randInt(1, 15);
+                    const c = a * x + b;
+                    return {
+                        question: `Tìm x ∈ ℤ biết: ${a}x + ${b} = ${c}`,
+                        answer: x.toString(),
+                        options: MathGenerator.generateOptions(x),
+                        solution: `Các bước giải phương trình:\n1) Chuyển vế: ${a}x = ${c} - ${b} = ${c - b}\n2) Chia 2 vế cho ${a}: x = ${c - b} / ${a} = ${x}.`
+                    };
+                },
+
+                // --- GRADE 8 ---
+                'g8_pythagoras': () => {
+                    // Pythagorean triples
+                    const triples = [[3, 4, 5], [6, 8, 10], [5, 12, 13], [9, 12, 15]];
+                    const picked = triples[MathGenerator.randInt(0, triples.length - 1)];
+                    return {
+                        question: `Cho tam giác ABC vuông tại A, có hai cạnh góc vuông AB = ${picked[0]} cm, AC = ${picked[1]} cm. Tính độ dài cạnh huyền BC?`,
+                        answer: picked[2].toString(),
+                        options: MathGenerator.generateOptions(picked[2]),
+                        solution: `Theo định lý Pythagoras trong tam giác vuông: BC² = AB² + AC² = ${picked[0]}² + ${picked[1]}² = ${picked[0]*picked[0]} + ${picked[1]*picked[1]} = ${picked[2]*picked[2]}.\n=> BC = √${picked[2]*picked[2]} = ${picked[2]} cm.`
+                    };
+                },
+
+                // --- GRADE 9 ---
+                'g9_radicals': () => {
+                    const a = MathGenerator.randInt(2, 9);
+                    const square = a * a;
+                    return {
+                        question: `Rút gọn biểu thức căn bậc hai: √(${square}) + 5 = ?`,
+                        answer: (a + 5).toString(),
+                        options: MathGenerator.generateOptions(a + 5),
+                        solution: `Ta có √(${square}) = √(${a}²) = ${a}.\nDo đó biểu thức bằng: ${a} + 5 = ${a + 5}.`
+                    };
+                }
+            },
+
+            // Generate distractors for multiple choice
+            generateOptions(correct, isFloat = false) {
+                const set = new Set();
+                set.add(isFloat ? correct.toFixed(1) : correct.toString());
+                while (set.size < 4) {
+                    let offset = MathGenerator.randInt(-5, 5);
+                    if (offset === 0) offset = 2;
+                    let val = correct + offset;
+                    set.add(isFloat ? val.toFixed(1) : val.toString());
+                }
+                return Array.from(set).sort(() => Math.random() - 0.5);
+            },
+
+            // Public method to fetch question
+            generate(topicId) {
+                if (this.generators[topicId]) {
+                    return this.generators[topicId]();
+                }
+                // Fallback default
+                return this.generators['g1_add_sub']();
+            }
+        };
+
+        // ==========================================
+        // 3. BADGES & ACHIEVEMENTS DEFINITION
+        // ==========================================
+        const Badges = [
+            { id: 'welcome', title: 'Tân Thủ MathMaster', desc: 'Tham gia ứng dụng luyện tập', icon: 'fa-user-ninja', color: 'text-indigo-500' },
+            { id: 'streak_3', title: 'Kiên Trì 3 Ngày', desc: 'Duy trì chuỗi học 3 ngày liên tiếp', icon: 'fa-fire', color: 'text-amber-500' },
+            { id: 'solved_10', title: 'Thần Đồng Tính Nhẩm', desc: 'Giải thành công 10 bài toán', icon: 'fa-bolt', color: 'text-blue-500' },
+            { id: 'solved_50', title: 'Bậc Thầy Toán Học', desc: 'Giải thành công 50 bài toán', icon: 'fa-graduation-cap', color: 'text-purple-500' },
+            { id: 'accuracy_80', title: 'Chính Xác Tuyệt Đối', desc: 'Đạt tỷ lệ đúng trên 80%', icon: 'fa-bullseye', color: 'text-emerald-500' },
+            { id: 'timed_master', title: 'Vua Tốc Độ', desc: 'Hoàn thành lượt thi tính giờ', icon: 'fa-stopwatch', color: 'text-rose-500' }
+        ];
+
+        // ==========================================
+        // 4. MAIN APP CONTROLLER
+        // ==========================================
+        const App = {
+            userData: null,
+            currentGrade: 1,
+            currentTopic: 'g1_add_sub',
+            currentMode: 'free', // 'free' | 'timed'
+            currentQuestion: null,
+            timerInterval: null,
+            timerSeconds: 60,
+
+            // Topic metadata map by Grade
+            gradeTopics: {
+                1: [
+                    { id: 'g1_add_sub', name: 'Cộng Trừ Cơ Bản (Phạm vi 20)', icon: 'fa-plus-minus' },
+                    { id: 'g1_compare', name: 'So Sánh Số (>, <, =)', icon: 'fa-code-compare' }
+                ],
+                2: [
+                    { id: 'g2_mental_mul', name: 'Tính Nhẩm Nhân (Bảng 2-5)', icon: 'fa-xmark' },
+                    { id: 'g2_find_x', name: 'Tìm X Cơ Bản', icon: 'fa-magnifying-glass' }
+                ],
+                3: [
+                    { id: 'g3_mul_div', name: 'Nhân Chia Nâng Cao', icon: 'fa-divide' },
+                    { id: 'g3_word_prob', name: 'Toán Có Lời Văn', icon: 'fa-book' }
+                ],
+                4: [
+                    { id: 'g4_fractions_basic', name: 'Phân Số Cơ Bản', icon: 'fa-pie-chart' }
+                ],
+                5: [
+                    { id: 'g5_decimals', name: 'Số Thập Phân', icon: 'fa-calculator' }
+                ],
+                6: [
+                    { id: 'g6_integers', name: 'Số Nguyên & Dấu', icon: 'fa-ruler-combined' }
+                ],
+                7: [
+                    { id: 'g7_algebra_1', name: 'Phương Trình Đơn Giản', icon: 'fa-square-root-variable' }
+                ],
+                8: [
+                    { id: 'g8_pythagoras', name: 'Định Lý Pythagoras', icon: 'fa-draw-polygon' }
+                ],
+                9: [
+                    { id: 'g9_radicals', name: 'Căn Thức & Rút Gọn', icon: 'fa-infinity' }
+                ]
+            },
+
+            init() {
+                this.userData = Storage.load();
+                this.updateHeaderStats();
+                this.renderGradeTabs();
+                this.navigateTo('dashboard');
+            },
+
+            // Navigation Handler
+            navigateTo(viewId) {
+                // Hide all sections
+                document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden'));
+                
+                // Show requested view
+                const target = document.getElementById(`view-${viewId}`);
+                if (target) target.classList.remove('hidden');
+
+                // Update active tab styles
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('bg-indigo-50', 'text-indigo-600');
+                    btn.classList.add('text-slate-600');
+                });
+                const activeNav = document.getElementById(`nav-${viewId}`);
+                if (activeNav) {
+                    activeNav.classList.add('bg-indigo-50', 'text-indigo-600');
+                }
+
+                // Render view specific logic
+                if (viewId === 'dashboard') this.renderDashboard();
+                if (viewId === 'practice-select') this.renderPracticeSelect();
+                if (viewId === 'stats') this.renderStats();
+                if (viewId === 'achievements') this.renderAchievements();
+            },
+
+            // Refresh top status UI
+            updateHeaderStats() {
+                document.getElementById('user-streak-display').innerText = this.userData.streak;
+                document.getElementById('user-level-display').innerText = this.userData.level;
+                document.getElementById('user-xp-display').innerText = `${this.userData.xp} XP`;
+            },
+
+            // Render Dashboard Data
+            renderDashboard() {
+                document.getElementById('dash-total-solved').innerText = this.userData.totalSolved;
+                const acc = this.userData.totalSolved > 0 ? Math.round((this.userData.correctSolved / this.userData.totalSolved) * 100) : 0;
+                document.getElementById('dash-accuracy').innerText = `${acc}%`;
+                document.getElementById('dash-badge-count').innerText = `${this.userData.badges.length}/${Badges.length}`;
+                document.getElementById('dash-best-streak').innerText = this.userData.bestStreak;
+            },
+
+            // Grade Selection Flow
+            selectGrade(grade) {
+                this.currentGrade = grade;
+                const topics = this.gradeTopics[grade];
+                if (topics && topics.length > 0) {
+                    this.currentTopic = topics[0].id;
+                }
+                this.navigateTo('practice-select');
+            },
+
+            startQuickPractice(levelType) {
+                if (levelType === 'primary') this.selectGrade(1);
+                else this.selectGrade(6);
+            },
+
+            renderGradeTabs() {
+                const container = document.getElementById('grade-selector-tabs');
+                let html = '';
+                for (let g = 1; g <= 9; g++) {
+                    html += `
+                        <button onclick="App.changeGradeTab(${g})" id="grade-tab-${g}" class="grade-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${g === this.currentGrade ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-indigo-600'}">
+                            Lớp ${g}
+                        </button>
+                    `;
+                }
+                container.innerHTML = html;
+            },
+
+            changeGradeTab(grade) {
+                this.currentGrade = grade;
+                const topics = this.gradeTopics[grade];
+                if (topics && topics.length > 0) {
+                    this.currentTopic = topics[0].id;
+                }
+                this.renderPracticeSelect();
+            },
+
+            setMode(mode) {
+                this.currentMode = mode;
+                const freeCard = document.getElementById('mode-card-free');
+                const timedCard = document.getElementById('mode-card-timed');
+                if (mode === 'free') {
+                    freeCard.className = 'cursor-pointer border-2 border-indigo-600 bg-indigo-50/50 p-4 rounded-2xl flex items-center gap-4 transition';
+                    timedCard.className = 'cursor-pointer border-2 border-slate-200 hover:border-indigo-300 p-4 rounded-2xl flex items-center gap-4 transition';
+                } else {
+                    timedCard.className = 'cursor-pointer border-2 border-rose-500 bg-rose-50/50 p-4 rounded-2xl flex items-center gap-4 transition';
+                    freeCard.className = 'cursor-pointer border-2 border-slate-200 hover:border-indigo-300 p-4 rounded-2xl flex items-center gap-4 transition';
+                }
+            },
+
+            renderPracticeSelect() {
+                this.renderGradeTabs();
+                document.getElementById('current-selected-grade-label').innerText = `Lớp ${this.currentGrade}`;
+                
+                const grid = document.getElementById('topics-grid');
+                const topics = this.gradeTopics[this.currentGrade] || [];
+                
+                grid.innerHTML = topics.map(t => `
+                    <div onclick="App.startPractice('${t.id}')" class="topic-card bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-500 hover:shadow-md cursor-pointer flex flex-col justify-between space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg">
+                                <i class="fa-solid ${t.icon}"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">${t.name}</h4>
+                                <span class="text-xs text-slate-400">Đã làm: ${this.userData.topicStats[t.id]?.solved || 0} bài</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs font-bold text-indigo-600">
+                            <span>Bắt đầu ngay</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            // Practice Room Initialization
+            startPractice(topicId) {
+                this.currentTopic = topicId;
+                this.navigateTo('practice-room');
+                document.getElementById('practice-grade-badge').innerText = `Lớp ${this.currentGrade}`;
+
+                if (this.currentMode === 'timed') {
+                    document.getElementById('timer-box').classList.remove('hidden');
+                    this.startTimer();
+                    this.checkBadgeUnlock('timed_master');
+                } else {
+                    document.getElementById('timer-box').classList.add('hidden');
+                    clearInterval(this.timerInterval);
+                }
+
+                this.loadNextQuestion();
+            },
+
+            startTimer() {
+                this.timerSeconds = 60;
+                document.getElementById('timer-counter').innerText = this.timerSeconds;
+                clearInterval(this.timerInterval);
+                
+                this.timerInterval = setInterval(() => {
+                    this.timerSeconds--;
+                    document.getElementById('timer-counter').innerText = this.timerSeconds;
+                    
+                    if (this.timerSeconds <= 10) {
+                        document.getElementById('timer-box').classList.add('timer-warning');
+                    }
+                    
+                    if (this.timerSeconds <= 0) {
+                        clearInterval(this.timerInterval);
+                        alert("Hết giờ làm bài thử thách!");
+                        this.exitPractice();
+                    }
+                }, 1000);
+            },
+
+            loadNextQuestion() {
+                // Reset UI state
+                document.getElementById('solution-box').classList.add('hidden');
+                document.getElementById('btn-submit-answer').classList.remove('hidden');
+                document.getElementById('btn-next-question').classList.add('hidden');
+
+                // Generate new math problem
+                this.currentQuestion = MathGenerator.generate(this.currentTopic);
+                
+                // Render text
+                document.getElementById('question-text').innerText = this.currentQuestion.question;
+
+                // Render Options / Inputs
+                const container = document.getElementById('answer-container');
+                if (this.currentQuestion.options) {
+                    container.innerHTML = `
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            ${this.currentQuestion.options.map(opt => `
+                                <button onclick="App.selectOption(this, '${opt}')" class="option-btn p-4 border-2 border-slate-200 hover:border-indigo-400 rounded-2xl font-bold text-slate-700 text-base text-center transition">
+                                    ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+            },
+
+            selectedAnswer: null,
+            selectOption(btnEl, val) {
+                document.querySelectorAll('.option-btn').forEach(b => {
+                    b.classList.remove('border-indigo-600', 'bg-indigo-50', 'text-indigo-700');
+                    b.classList.add('border-slate-200');
+                });
+                btnEl.classList.remove('border-slate-200');
+                btnEl.classList.add('border-indigo-600', 'bg-indigo-50', 'text-indigo-700');
+                this.selectedAnswer = val;
+            },
+
+            checkAnswer() {
+                if (!this.selectedAnswer) {
+                    alert("Vui lòng chọn một đáp án!");
+                    return;
+                }
+
+                const isCorrect = (this.selectedAnswer === this.currentQuestion.answer);
+
+                // Update Stats
+                this.userData.totalSolved++;
+                if (!this.userData.topicStats[this.currentTopic]) {
+                    this.userData.topicStats[this.currentTopic] = { solved: 0, correct: 0 };
+                }
+                this.userData.topicStats[this.currentTopic].solved++;
+
+                if (isCorrect) {
+                    this.userData.correctSolved++;
+                    this.userData.topicStats[this.currentTopic].correct++;
+                    this.userData.xp += 10 * (this.currentMode === 'timed' ? 2 : 1);
+
+                    // Confetti effect
+                    confetti({ particleCount: 60, spread: 60, origin: { y: 0.7 } });
+
+                    // Level Up check
+                    if (this.userData.xp >= this.userData.level * 50) {
+                        this.userData.level++;
+                    }
+
+                    // Check badge achievements
+                    if (this.userData.totalSolved >= 10) this.checkBadgeUnlock('solved_10');
+                    if (this.userData.totalSolved >= 50) this.checkBadgeUnlock('solved_50');
+                    
+                    const acc = (this.userData.correctSolved / this.userData.totalSolved) * 100;
+                    if (this.userData.totalSolved >= 10 && acc >= 80) this.checkBadgeUnlock('accuracy_80');
+
+                } else {
+                    // Shake animation or sound could go here
+                }
+
+                // Show solution & toggle action buttons
+                document.getElementById('solution-text').innerText = this.currentQuestion.solution;
+                document.getElementById('solution-box').classList.remove('hidden');
+                document.getElementById('btn-submit-answer').classList.add('hidden');
+                document.getElementById('btn-next-question').classList.remove('hidden');
+
+                // Save persistent data
+                Storage.save(this.userData);
+                this.updateHeaderStats();
+            },
+
+            nextQuestion() {
+                this.selectedAnswer = null;
+                this.loadNextQuestion();
+            },
+
+            toggleHint() {
+                const box = document.getElementById('solution-box');
+                document.getElementById('solution-text').innerText = this.currentQuestion.solution;
+                box.classList.toggle('hidden');
+            },
+
+            exitPractice() {
+                clearInterval(this.timerInterval);
+                document.getElementById('timer-box').classList.remove('timer-warning');
+                this.navigateTo('practice-select');
+            },
+
+            // Stats View Rendering
+            renderStats() {
+                document.getElementById('stats-solved-count').innerText = this.userData.totalSolved;
+                document.getElementById('stats-correct-count').innerText = this.userData.correctSolved;
+                const acc = this.userData.totalSolved > 0 ? Math.round((this.userData.correctSolved / this.userData.totalSolved) * 100) : 0;
+                document.getElementById('stats-accuracy-rate').innerText = `${acc}%`;
+
+                // Render breakdown
+                const breakdown = document.getElementById('stats-grade-breakdown');
+                let html = '';
+                for (let g = 1; g <= 9; g++) {
+                    const topics = this.gradeTopics[g] || [];
+                    let gradeSolved = 0;
+                    let gradeCorrect = 0;
+                    topics.forEach(t => {
+                        const st = this.userData.topicStats[t.id];
+                        if (st) {
+                            gradeSolved += st.solved;
+                            gradeCorrect += st.correct;
+                        }
+                    });
+
+                    const pct = gradeSolved > 0 ? Math.round((gradeCorrect / gradeSolved) * 100) : 0;
+                    html += `
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-bold text-slate-700">
+                                <span>Khối Lớp ${g}</span>
+                                <span>${gradeSolved} bài (${pct}% đúng)</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                                <div class="bg-indigo-600 h-2.5 rounded-full" style="width: ${pct}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }
+                breakdown.innerHTML = html;
+            },
+
+            // Achievements / Badges View
+            renderAchievements() {
+                const container = document.getElementById('badges-grid');
+                container.innerHTML = Badges.map(b => {
+                    const unlocked = this.userData.badges.includes(b.id);
+                    return `
+                        <div class="bg-white p-5 rounded-2xl border ${unlocked ? 'border-amber-300 shadow-sm' : 'border-slate-200 opacity-60'} flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl ${unlocked ? 'bg-amber-100' : 'bg-slate-100'} flex items-center justify-center text-2xl ${b.color}">
+                                <i class="fa-solid ${b.icon}"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">${b.title}</h4>
+                                <p class="text-xs text-slate-500">${b.desc}</p>
+                                <span class="text-[10px] font-extrabold uppercase tracking-wider ${unlocked ? 'text-amber-600' : 'text-slate-400'}">
+                                    ${unlocked ? 'Đã mở khóa' : 'Chưa đạt'}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            checkBadgeUnlock(badgeId) {
+                if (!this.userData.badges.includes(badgeId)) {
+                    this.userData.badges.push(badgeId);
+                    Storage.save(this.userData);
+                }
+            }
+        };
+
+        // Initialize application on load
+        window.addEventListener('DOMContentLoaded', () => App.init());
+    </script>
+</body>
+</html>
