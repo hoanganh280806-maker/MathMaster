@@ -17,7 +17,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
         (function() {
-            emailjs.init("XbH7oNNM9B1gTAFyJ"); // Public Key của bạn
+            emailjs.init("XbH7oNNM9B1gTAFyJ"); // Public Key
         })();
     </script>
 
@@ -67,10 +67,17 @@
 
                 <!-- User Profile & Stats Widget -->
                 <div class="flex items-center gap-3">
-                    <div id="user-profile-badge" class="flex items-center gap-2 cursor-pointer bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold transition" onclick="App.toggleAuthModal()">
-                        <i class="fa-solid fa-user-circle text-indigo-600 text-base"></i>
-                        <span id="header-user-name">Đăng Nhập / Đăng Ký</span>
+                    <div id="user-profile-container" class="flex items-center gap-2">
+                        <div id="user-profile-badge" class="flex items-center gap-2 cursor-pointer bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold transition" onclick="App.toggleAuthModal()">
+                            <i class="fa-solid fa-user-circle text-indigo-600 text-base"></i>
+                            <span id="header-user-name">Đăng Nhập / Đăng Ký</span>
+                        </div>
+                        <button id="btn-header-logout" onclick="AuthModule.logout()" class="hidden flex items-center gap-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-xl font-bold text-xs transition" title="Đăng xuất tài khoản">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <span class="hidden sm:inline">Đăng xuất</span>
+                        </button>
                     </div>
+
                     <div class="flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-700 px-3 py-1.5 rounded-xl font-bold text-sm">
                         <i class="fa-solid fa-fire text-amber-500 animate-bounce"></i>
                         <span id="user-streak-display">1</span>
@@ -149,7 +156,7 @@
                 </div>
             </div>
 
-            <!-- CÁC CARD THỐNG KÊ GỐC -->
+            <!-- STATS -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg"><i class="fa-solid fa-circle-check"></i></div>
@@ -192,7 +199,6 @@
                 <div id="grade-selector-tabs" class="flex flex-wrap gap-1 bg-slate-200/70 p-1 rounded-2xl max-w-full overflow-x-auto"></div>
             </div>
 
-            <!-- Mode Selection Options -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div onclick="App.setMode('free')" id="mode-card-free" class="cursor-pointer border-2 border-indigo-600 bg-indigo-50/50 p-4 rounded-2xl flex items-center gap-4 transition">
                     <div class="w-12 h-12 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xl font-bold shadow-md">
@@ -215,7 +221,6 @@
                 </div>
             </div>
 
-            <!-- Topics Grid -->
             <div>
                 <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-list-check text-indigo-600"></i> Các dạng toán thuộc <span id="current-selected-grade-label" class="text-indigo-600">Lớp 1</span>
@@ -426,12 +431,11 @@
 
     </main>
 
-    <!-- AUTH MODAL (ĐĂNG NHẬP / ĐĂNG KÝ FIREBASE KẾT HỢP OTP EMAILJS) -->
+    <!-- AUTH MODAL -->
     <div id="auth-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 max-w-sm w-full space-y-4 shadow-2xl">
             <h3 id="auth-modal-title" class="text-xl font-bold text-center text-slate-800">Đăng Nhập Tài Khoản</h3>
             
-            <!-- Form Đăng Nhập / Đăng Ký Thông Thường -->
             <div id="auth-form-inputs" class="space-y-3">
                 <div id="register-name-field" class="hidden">
                     <input type="text" id="auth-name" placeholder="Họ và tên học sinh..." class="w-full p-3 border rounded-xl text-sm outline-none">
@@ -439,13 +443,12 @@
                 <input type="email" id="auth-email" placeholder="Email của bạn..." class="w-full p-3 border rounded-xl text-sm outline-none">
                 <input type="password" id="auth-password" placeholder="Mật khẩu..." class="w-full p-3 border rounded-xl text-sm outline-none">
                 
-                <!-- Quên mật khẩu -->
                 <div id="forgot-password-link" class="text-right">
                     <button onclick="AuthModule.forgotPassword()" class="text-xs text-indigo-600 hover:underline font-semibold">Quên mật khẩu?</button>
                 </div>
             </div>
 
-            <!-- Khung Nhập Mã OTP (Chỉ hiển thị ở Bước 2 Đăng Ký) -->
+            <!-- Khung OTP -->
             <div id="otp-verify-section" class="hidden space-y-3 bg-indigo-50 p-4 rounded-2xl border border-indigo-200 text-center">
                 <p class="text-xs font-bold text-indigo-900">Mã OTP 6 số đã được gửi tới Email của bạn. Vui lòng kiểm tra hộp thư!</p>
                 <input type="text" id="auth-otp-input" maxlength="6" placeholder="Nhập mã 6 số..." class="w-full p-3 text-center tracking-widest text-xl font-extrabold border rounded-xl outline-none bg-white">
@@ -453,9 +456,9 @@
             
             <button id="btn-auth-submit" onclick="AuthModule.handleAuth()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-lg">Đăng Nhập</button>
             
-            <div class="text-center text-xs flex justify-between px-1">
-                <span id="auth-switch-text" class="text-slate-500">Chưa có tài khoản?</span> 
-                <button onclick="AuthModule.toggleAuthMode()" class="text-indigo-600 font-bold hover:underline">Đăng ký ngay</button>
+            <div class="text-center text-xs flex justify-between items-center px-1">
+                <button onclick="AuthModule.toggleAuthMode()" id="auth-switch-btn-left" class="text-slate-500 font-semibold hover:text-indigo-600 hover:underline">Chưa có tài khoản?</button>
+                <button onclick="AuthModule.toggleAuthMode()" id="auth-switch-btn-right" class="text-indigo-600 font-bold hover:underline">Đăng ký ngay</button>
             </div>
             <button onclick="App.toggleAuthModal()" class="w-full py-2 text-slate-400 font-semibold text-xs">Đóng lại</button>
         </div>
@@ -476,7 +479,7 @@
             signOut, onAuthStateChanged, sendPasswordResetEmail 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { 
-            getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc, increment 
+            getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // Cấu hình Firebase
@@ -494,10 +497,11 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- DATABASE & AUTH CONTROLLER ---
+        // --- DATABASE CONTROLLER ---
         window.CloudDB = {
             currentUser: null,
             userData: {
+                name: '',
                 xp: 0, level: 1, streak: 1,
                 totalSolved: 0, correctSolved: 0, bestStreak: 0,
                 topicStats: {}, badges: ['welcome']
@@ -518,6 +522,11 @@
                         }
                     } else {
                         this.currentUser = null;
+                        this.userData = {
+                            name: '', xp: 0, level: 1, streak: 1,
+                            totalSolved: 0, correctSolved: 0, bestStreak: 0,
+                            topicStats: {}, badges: ['welcome']
+                        };
                     }
                     callback(user);
                 });
@@ -556,7 +565,7 @@
             }
         };
 
-        // --- AUTH MODULE (TÍCH HỢP MÃ OTP 6 SỐ EMAILJS & THÔNG SỐ THẬT) ---
+        // --- AUTH MODULE ---
         let isRegisterMode = false;
         let generatedOtp = null;
         let pendingRegisterData = null;
@@ -570,7 +579,17 @@
                 document.getElementById('auth-form-inputs').classList.remove('hidden');
                 document.getElementById('forgot-password-link').classList.toggle('hidden', isRegisterMode);
                 document.getElementById('btn-auth-submit').innerText = isRegisterMode ? 'Gửi Mã Xác Thực OTP' : 'Đăng Nhập';
-                document.getElementById('auth-switch-text').innerText = isRegisterMode ? 'Đã có tài khoản?' : 'Chưa có tài khoản?';
+                
+                const leftBtn = document.getElementById('auth-switch-btn-left');
+                const rightBtn = document.getElementById('auth-switch-btn-right');
+                
+                if (isRegisterMode) {
+                    leftBtn.innerText = 'Đã có tài khoản?';
+                    rightBtn.innerText = 'Đăng nhập ngay';
+                } else {
+                    leftBtn.innerText = 'Chưa có tài khoản?';
+                    rightBtn.innerText = 'Đăng ký ngay';
+                }
             },
 
             async handleAuth() {
@@ -580,27 +599,32 @@
 
                 if (!email || !password) return alert("Vui lòng điền đầy đủ email và mật khẩu!");
 
-                // 1. XỬ LÝ ĐĂNG NHẬP THÔNG THƯỜNG
+                // 1. ĐĂNG NHẬP
                 if (!isRegisterMode) {
                     try {
-                        await signInWithEmailAndPassword(auth, email, password);
-                        alert("🎉 Đăng nhập thành công!");
-                        App.toggleAuthModal();
-                        location.reload();
+                        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                        const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+                        if (userDoc.exists()) {
+                            CloudDB.userData = { ...CloudDB.userData, ...userDoc.data() };
+                        }
+                        
+                        alert("🎉 Đăng nhập thành công! Chào mừng " + (CloudDB.userData.name || email));
+                        document.getElementById('auth-modal').classList.add('hidden');
+                        App.updateHeaderStats(userCredential.user);
+                        App.renderDashboard();
                     } catch (error) {
                         alert("Lỗi đăng nhập: " + error.message);
                     }
                     return;
                 }
 
-                // 2. XỬ LÝ ĐĂNG KÝ - BƯỚC 1: SINH VÀ GỬI MÃ OTP 6 SỐ
+                // 2. ĐĂNG KÝ - GỬI OTP QUA EMAILJS (Đã cập nhật template_j5c7dzb)
                 const otpSection = document.getElementById('otp-verify-section');
                 const isOtpVisible = !otpSection.classList.contains('hidden');
 
                 if (!isOtpVisible) {
                     if (!name) return alert("Vui lòng nhập tên học sinh!");
                     
-                    // Sinh mã OTP 6 số ngẫu nhiên
                     generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
                     pendingRegisterData = { email, password, name };
 
@@ -615,9 +639,7 @@
                     btn.disabled = true;
 
                     try {
-                        // Tích hợp Service ID và Template ID thật của bạn
                         await emailjs.send('service_43l82sp', 'template_j5c7dzb', templateParams);
-                        
                         alert("🎉 Mã OTP 6 số đã được gửi thành công đến email: " + email);
                         otpSection.classList.remove('hidden');
                         document.getElementById('auth-form-inputs').classList.add('hidden');
@@ -629,7 +651,7 @@
                         btn.disabled = false;
                     }
                 } 
-                // 3. XỬ LÝ ĐĂNG KÝ - BƯỚC 2: KIỂM TRA MÃ OTP VÀ TẠO TÀI KHOẢN FIREBASE
+                // 3. XÁC NHẬN OTP & TẠO TÀI KHOẢN
                 else {
                     const enteredOtp = document.getElementById('auth-otp-input').value.trim();
                     if (enteredOtp !== generatedOtp) {
@@ -638,16 +660,20 @@
 
                     try {
                         const res = await createUserWithEmailAndPassword(auth, pendingRegisterData.email, pendingRegisterData.password);
-                        await setDoc(doc(db, "users", res.user.uid), {
+                        const newUser = {
                             name: pendingRegisterData.name, 
                             email: pendingRegisterData.email, 
                             xp: 0, level: 1, streak: 1, 
                             totalSolved: 0, correctSolved: 0, 
                             bestStreak: 0, topicStats: {}, badges: ['welcome']
-                        });
+                        };
+                        await setDoc(doc(db, "users", res.user.uid), newUser);
+                        CloudDB.userData = newUser;
+
                         alert("🎉 Đăng ký tài khoản thành công qua xác thực OTP!");
-                        App.toggleAuthModal();
-                        location.reload();
+                        document.getElementById('auth-modal').classList.add('hidden');
+                        App.updateHeaderStats(res.user);
+                        App.renderDashboard();
                     } catch (error) {
                         alert("Lỗi tạo tài khoản Firebase: " + error.message);
                     }
@@ -656,22 +682,21 @@
 
             async forgotPassword() {
                 const email = document.getElementById('auth-email').value.trim();
-                if (!email) {
-                    alert("Vui lòng nhập Email của bạn vào ô 'Email của bạn' trước khi bấm Quên mật khẩu!");
-                    return;
-                }
+                if (!email) return alert("Vui lòng nhập Email của bạn vào ô 'Email của bạn' trước khi bấm Quên mật khẩu!");
                 try {
                     await sendPasswordResetEmail(auth, email);
-                    alert("🎉 Đã gửi email khôi phục mật khẩu! Vui lòng kiểm tra hộp thư đến (hoặc thư rác / Spam) của bạn.");
+                    alert("🎉 Đã gửi email khôi phục mật khẩu! Vui lòng kiểm tra hộp thư đến (hoặc hòm thư Spam) của bạn.");
                 } catch (error) {
                     alert("Lỗi gửi email khôi phục: " + error.message);
                 }
             },
 
             async logout() {
-                await signOut(auth);
-                alert("Đã đăng xuất!");
-                location.reload();
+                if (confirm("Bạn có muốn đăng xuất tài khoản không?")) {
+                    await signOut(auth);
+                    alert("Đã đăng xuất tài khoản thành công!");
+                    location.reload();
+                }
             }
         };
 
@@ -776,20 +801,24 @@
 
             updateHeaderStats(user) {
                 const badge = document.getElementById('header-user-name');
+                const logoutBtn = document.getElementById('btn-header-logout');
+
                 if (user) {
-                    badge.innerHTML = `${CloudDB.userData.name || user.email} <span class="text-rose-500 ml-1" onclick="event.stopPropagation(); AuthModule.logout()" title="Đăng xuất"><i class="fa-solid fa-right-from-bracket"></i></span>`;
+                    const studentName = CloudDB.userData.name || user.email;
+                    badge.innerHTML = `<span class="text-indigo-700 font-extrabold">${studentName}</span>`;
+                    logoutBtn.classList.remove('hidden');
                 } else {
                     badge.innerHTML = 'Đăng Nhập / Đăng Ký';
+                    logoutBtn.classList.add('hidden');
                 }
+
                 document.getElementById('user-streak-display').innerText = CloudDB.userData.streak || 1;
                 document.getElementById('user-level-display').innerText = CloudDB.userData.level || 1;
                 document.getElementById('user-xp-display').innerText = `${CloudDB.userData.xp || 0} XP`;
             },
 
             toggleAuthModal() { 
-                if (CloudDB.currentUser) {
-                    if (confirm("Bạn có muốn đăng xuất tài khoản không?")) AuthModule.logout();
-                } else {
+                if (!CloudDB.currentUser) {
                     document.getElementById('auth-modal').classList.toggle('hidden'); 
                 }
             },
