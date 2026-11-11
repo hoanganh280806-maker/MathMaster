@@ -12,20 +12,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Canvas Confetti CDN -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- EmailJS SDK Integration -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("XbH7oNNM9B1gTAFyJ"); // Public Key của bạn
+        })();
+    </script>
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-        }
-        .tab-btn, .grade-btn, .topic-card, .btn-action {
-            transition: all 0.2s ease-in-out;
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .tab-btn, .grade-btn, .topic-card, .btn-action, .theory-card, .exam-card { transition: all 0.2s ease-in-out; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
@@ -66,15 +65,15 @@
                     </button>
                 </nav>
 
-                <!-- User Stats Header Widget -->
+                <!-- User Profile & Stats Widget -->
                 <div class="flex items-center gap-3">
                     <div id="user-profile-badge" class="flex items-center gap-2 cursor-pointer bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold transition" onclick="App.toggleAuthModal()">
                         <i class="fa-solid fa-user-circle text-indigo-600 text-base"></i>
-                        <span id="header-user-name">Khách (Chưa ĐN)</span>
+                        <span id="header-user-name">Đăng Nhập / Đăng Ký</span>
                     </div>
-                    <div class="flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-700 px-3 py-1.5 rounded-xl font-bold text-sm" title="Chuỗi ngày luyện tập">
+                    <div class="flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-700 px-3 py-1.5 rounded-xl font-bold text-sm">
                         <i class="fa-solid fa-fire text-amber-500 animate-bounce"></i>
-                        <span id="user-streak-display">0</span>
+                        <span id="user-streak-display">1</span>
                     </div>
                     <div class="hidden sm:flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-xl text-sm font-bold text-indigo-700">
                         <i class="fa-solid fa-star text-amber-400"></i>
@@ -90,7 +89,7 @@
     <!-- MAIN CONTENT CONTAINER -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
 
-        <!-- VIEW 1: DASHBOARD / OVERVIEW -->
+        <!-- VIEW 1: DASHBOARD -->
         <section id="view-dashboard" class="view-section space-y-6">
             <div class="rounded-3xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-violet-700 text-white p-6 sm:p-10 shadow-xl relative overflow-hidden">
                 <div class="absolute right-0 top-0 bottom-0 opacity-10 pointer-events-none flex items-center pr-10">
@@ -150,7 +149,7 @@
                 </div>
             </div>
 
-            <!-- Quick Stats Summary -->
+            <!-- CÁC CARD THỐNG KÊ GỐC -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg"><i class="fa-solid fa-circle-check"></i></div>
@@ -170,20 +169,20 @@
                     <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-lg"><i class="fa-solid fa-award"></i></div>
                     <div>
                         <div class="text-xs text-slate-500 font-medium">Danh hiệu đạt được</div>
-                        <div id="dash-badge-count" class="text-lg font-bold text-slate-800">0/6</div>
+                        <div id="dash-badge-count" class="text-lg font-bold text-slate-800">1/6</div>
                     </div>
                 </div>
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg"><i class="fa-solid fa-bolt"></i></div>
                     <div>
                         <div class="text-xs text-slate-500 font-medium">Chuỗi cao nhất</div>
-                        <div id="dash-best-streak" class="text-lg font-bold text-slate-800">0</div>
+                        <div id="dash-best-streak" class="text-lg font-bold text-slate-800">1</div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- VIEW 2: PRACTICE SELECTION (ĐÃ CẬP NHẬT THEO YÊU CẦU) -->
+        <!-- VIEW 2: PRACTICE SELECTION -->
         <section id="view-practice-select" class="view-section hidden space-y-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
@@ -193,18 +192,19 @@
                 <div id="grade-selector-tabs" class="flex flex-wrap gap-1 bg-slate-200/70 p-1 rounded-2xl max-w-full overflow-x-auto"></div>
             </div>
 
-            <!-- Mode Selection Options (Đã đổi thành Bài kiểm tra theo từng dạng - 30 phút) -->
+            <!-- Mode Selection Options -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div onclick="App.setMode('free')" id="mode-card-free" class="cursor-pointer border-2 border-indigo-600 bg-indigo-50/50 p-4 rounded-2xl flex items-center gap-4 transition">
                     <div class="w-12 h-12 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xl font-bold shadow-md">
                         <i class="fa-solid fa-book-open"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-slate-800">Chế độ Tự Do</h3>
-                        <p class="text-xs text-slate-600">Không giới hạn thời gian, có gợi ý & hướng dẫn giải từng bước.</p>
+                        <h3 class="font-bold text-slate-800">Chế độ Luyện Tập (30s/câu)</h3>
+                        <p class="text-xs text-slate-600">Đếm ngược từng câu, có gợi ý chi tiết & hướng dẫn giải từng bước.</p>
                     </div>
                 </div>
-                <div onclick="App.setMode('test')" id="mode-card-test" class="cursor-pointer border-2 border-slate-200 hover:border-indigo-300 p-4 rounded-2xl flex items-center gap-4 transition">
+
+                <div onclick="App.openExamList()" id="mode-card-test" class="cursor-pointer border-2 border-slate-200 hover:border-indigo-300 p-4 rounded-2xl flex items-center gap-4 transition">
                     <div class="w-12 h-12 rounded-xl bg-rose-500 text-white flex items-center justify-center text-xl font-bold shadow-md">
                         <i class="fa-solid fa-file-lines"></i>
                     </div>
@@ -224,7 +224,27 @@
             </div>
         </section>
 
-        <!-- VIEW 3: THEORY VIEW (LÝ THUYẾT TRỌNG TÂM) -->
+        <!-- VIEW 2.5: EXAM LIST VIEW -->
+        <section id="view-exam-list" class="view-section hidden max-w-4xl mx-auto space-y-6">
+            <div class="flex items-center justify-between glass-card p-4 rounded-2xl border border-slate-200">
+                <button onclick="App.navigateTo('practice-select')" class="text-slate-500 hover:text-slate-800 font-semibold text-sm flex items-center gap-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-100 transition">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </button>
+                <span id="exam-grade-badge" class="bg-rose-100 text-rose-700 text-xs font-bold px-3 py-1 rounded-full">Đề Thi Lớp 1</span>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-md border space-y-6">
+                <div>
+                    <span class="text-xs font-bold text-rose-600 uppercase tracking-wider">KHO ĐỀ THI KIỂM TRA ĐỒNG BỘ TỪ CLOUD</span>
+                    <h2 class="text-2xl font-extrabold text-slate-800 mt-1">Danh Sách Đề Kiểm Tra Theo Dạng</h2>
+                    <p class="text-xs text-slate-500 mt-1">Đồng bộ trực tiếp từ cơ sở dữ liệu Firebase Cloud</p>
+                </div>
+
+                <div id="uploaded-exams-container" class="space-y-3"></div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: THEORY MENU -->
         <section id="view-theory" class="view-section hidden max-w-3xl mx-auto space-y-6">
             <div class="flex items-center justify-between glass-card p-4 rounded-2xl border border-slate-200">
                 <button onclick="App.navigateTo('practice-select')" class="text-slate-500 hover:text-slate-800 font-semibold text-sm flex items-center gap-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-100 transition">
@@ -235,36 +255,86 @@
 
             <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-md border space-y-6">
                 <div>
-                    <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Hệ thống kiến thức</span>
+                    <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">HỆ THỐNG KIẾN THỨC</span>
                     <h2 id="theory-title" class="text-2xl font-extrabold text-slate-800 mt-1">Tiêu đề dạng toán</h2>
                 </div>
 
-                <div class="space-y-4 text-slate-700">
-                    <div class="bg-indigo-50 border border-indigo-200 p-5 rounded-2xl space-y-2">
-                        <h4 class="font-bold text-indigo-900 flex items-center gap-2"><i class="fa-solid fa-book-bookmark text-indigo-600"></i> Định nghĩa & Công thức trọng tâm:</h4>
-                        <p id="theory-definition" class="text-sm leading-relaxed font-medium text-indigo-950"></p>
+                <div class="space-y-4">
+                    <div onclick="App.openTheoryDetail('def')" class="theory-card cursor-pointer p-5 rounded-2xl border-2 border-indigo-200 bg-indigo-50/40 hover:bg-indigo-50 hover:border-indigo-400 hover:shadow-md flex items-center justify-between transition">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-11 h-11 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-lg font-bold shadow-sm">
+                                <i class="fa-solid fa-book-bookmark"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-indigo-900 text-base">Định nghĩa & Công thức trọng tâm</h4>
+                                <p class="text-xs text-indigo-600">Bấm để xem lý thuyết và công thức cốt lõi</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-indigo-500 text-lg"></i>
                     </div>
 
-                    <div class="bg-amber-50 border border-amber-200 p-5 rounded-2xl space-y-2">
-                        <h4 class="font-bold text-amber-900 flex items-center gap-2"><i class="fa-solid fa-lightbulb text-amber-500"></i> Mẹo tính toán & Lưu ý quan trọng:</h4>
-                        <p id="theory-tips" class="text-sm leading-relaxed font-medium text-amber-950"></p>
+                    <div onclick="App.openTheoryDetail('tips')" class="theory-card cursor-pointer p-5 rounded-2xl border-2 border-amber-200 bg-amber-50/40 hover:bg-amber-50 hover:border-amber-400 hover:shadow-md flex items-center justify-between transition">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-11 h-11 rounded-xl bg-amber-500 text-white flex items-center justify-center text-lg font-bold shadow-sm">
+                                <i class="fa-solid fa-lightbulb"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-amber-900 text-base">Mẹo tính toán & Lưu ý quan trọng</h4>
+                                <p class="text-xs text-amber-700">Các mẹo giải nhanh và lỗi sai cần tránh</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-amber-500 text-lg"></i>
                     </div>
 
-                    <div class="bg-emerald-50 border border-emerald-200 p-5 rounded-2xl space-y-2">
-                        <h4 class="font-bold text-emerald-900 flex items-center gap-2"><i class="fa-solid fa-pencil text-emerald-600"></i> Ví dụ mẫu minh họa:</h4>
-                        <p id="theory-example" class="text-sm leading-relaxed font-medium text-emerald-950"></p>
+                    <div onclick="App.openTheoryDetail('ex')" class="theory-card cursor-pointer p-5 rounded-2xl border-2 border-emerald-200 bg-emerald-50/40 hover:bg-emerald-50 hover:border-emerald-400 hover:shadow-md flex items-center justify-between transition">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-lg font-bold shadow-sm">
+                                <i class="fa-solid fa-pencil"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-emerald-900 text-base">Ví dụ mẫu minh họa</h4>
+                                <p class="text-xs text-emerald-700">Các dạng bài tập có bài giải mẫu chi tiết</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-emerald-500 text-lg"></i>
                     </div>
                 </div>
 
-                <div class="pt-4">
-                    <button onclick="App.startPractice(App.currentTopic)" class="w-full py-3.5 px-6 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold rounded-2xl shadow-lg transition text-center">
+                <div class="pt-2">
+                    <button onclick="App.startPractice(App.currentTopic)" class="w-full py-3.5 px-6 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold rounded-2xl shadow-lg transition text-center">
                         <i class="fa-solid fa-play mr-2"></i> Bắt đầu làm bài luyện tập
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- VIEW 4: PRACTICE ROOM (QUESTION WORKSPACE) -->
+        <!-- VIEW 3.5: THEORY DETAIL VIEW -->
+        <section id="view-theory-detail" class="view-section hidden max-w-3xl mx-auto space-y-6">
+            <div class="flex items-center justify-between glass-card p-4 rounded-2xl border border-slate-200">
+                <button onclick="App.navigateTo('theory')" class="text-slate-500 hover:text-slate-800 font-semibold text-sm flex items-center gap-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-100 transition">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại danh mục
+                </button>
+                <span id="theory-detail-topic-badge" class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">Dạng toán</span>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-md border space-y-6">
+                <div id="theory-detail-container" class="p-6 rounded-2xl space-y-3">
+                    <h3 id="theory-detail-section-title" class="text-xl font-bold flex items-center gap-2"></h3>
+                    <div id="theory-detail-content" class="text-base font-medium leading-relaxed pt-2 border-t"></div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button onclick="App.navigateTo('theory')" class="py-3 px-6 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl transition text-center">
+                        <i class="fa-solid fa-list mr-1.5"></i> Chọn Mục Khác
+                    </button>
+                    <button onclick="App.startPractice(App.currentTopic)" class="flex-grow py-3 px-6 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold rounded-2xl shadow-lg transition text-center">
+                        <i class="fa-solid fa-play mr-2"></i> Bắt Đầu Luyện Tập Ngay
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: PRACTICE ROOM -->
         <section id="view-practice-room" class="view-section hidden max-w-3xl mx-auto space-y-6">
             <div class="flex items-center justify-between glass-card p-4 rounded-2xl border border-slate-200">
                 <button onclick="App.exitPractice()" class="text-slate-500 hover:text-slate-800 font-semibold text-sm flex items-center gap-1.5 px-3 py-1.5 rounded-xl hover:bg-slate-100 transition">
@@ -272,9 +342,9 @@
                 </button>
                 <div class="flex items-center gap-4">
                     <span id="practice-grade-badge" class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">Lớp 1</span>
-                    <div id="timer-box" class="hidden flex items-center gap-1.5 font-mono text-base font-extrabold text-slate-700 bg-rose-50 border border-rose-200 px-3 py-1 rounded-xl">
-                        <i class="fa-solid fa-clock text-rose-500"></i>
-                        <span id="timer-counter">1800</span>s
+                    <div id="timer-box" class="flex items-center gap-1.5 font-mono text-base font-extrabold text-slate-700 bg-amber-50 border border-amber-200 px-3 py-1 rounded-xl">
+                        <i class="fa-solid fa-clock text-amber-500"></i>
+                        <span id="timer-counter">30</span>s
                     </div>
                 </div>
             </div>
@@ -290,6 +360,13 @@
                 </div>
 
                 <div id="answer-container" class="mt-8"></div>
+
+                <div id="hint-box" class="hidden mt-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-sm space-y-1">
+                    <div class="font-bold text-amber-900 flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> Gợi ý cách làm:
+                    </div>
+                    <div id="hint-text" class="text-amber-950 font-medium leading-relaxed"></div>
+                </div>
 
                 <div id="solution-box" class="hidden mt-6 p-4 rounded-2xl bg-indigo-50 border border-indigo-200 text-sm space-y-2">
                     <div class="font-bold text-indigo-900 flex items-center gap-2">
@@ -349,13 +426,37 @@
 
     </main>
 
-    <!-- AUTH MODAL -->
+    <!-- AUTH MODAL (ĐĂNG NHẬP / ĐĂNG KÝ FIREBASE KẾT HỢP OTP EMAILJS) -->
     <div id="auth-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 max-w-sm w-full space-y-4 shadow-2xl">
-            <h3 class="text-xl font-bold text-center text-slate-800">Đăng Nhập Tài Khoản Học Sinh</h3>
-            <input type="text" id="login-name" placeholder="Họ và tên..." class="w-full p-3 border rounded-xl text-sm outline-none">
-            <input type="email" id="login-email" placeholder="Email phụ huynh..." class="w-full p-3 border rounded-xl text-sm outline-none">
-            <button onclick="App.loginUser()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition">Xác Nhận Đăng Nhập</button>
+            <h3 id="auth-modal-title" class="text-xl font-bold text-center text-slate-800">Đăng Nhập Tài Khoản</h3>
+            
+            <!-- Form Đăng Nhập / Đăng Ký Thông Thường -->
+            <div id="auth-form-inputs" class="space-y-3">
+                <div id="register-name-field" class="hidden">
+                    <input type="text" id="auth-name" placeholder="Họ và tên học sinh..." class="w-full p-3 border rounded-xl text-sm outline-none">
+                </div>
+                <input type="email" id="auth-email" placeholder="Email của bạn..." class="w-full p-3 border rounded-xl text-sm outline-none">
+                <input type="password" id="auth-password" placeholder="Mật khẩu..." class="w-full p-3 border rounded-xl text-sm outline-none">
+                
+                <!-- Quên mật khẩu -->
+                <div id="forgot-password-link" class="text-right">
+                    <button onclick="AuthModule.forgotPassword()" class="text-xs text-indigo-600 hover:underline font-semibold">Quên mật khẩu?</button>
+                </div>
+            </div>
+
+            <!-- Khung Nhập Mã OTP (Chỉ hiển thị ở Bước 2 Đăng Ký) -->
+            <div id="otp-verify-section" class="hidden space-y-3 bg-indigo-50 p-4 rounded-2xl border border-indigo-200 text-center">
+                <p class="text-xs font-bold text-indigo-900">Mã OTP 6 số đã được gửi tới Email của bạn. Vui lòng kiểm tra hộp thư!</p>
+                <input type="text" id="auth-otp-input" maxlength="6" placeholder="Nhập mã 6 số..." class="w-full p-3 text-center tracking-widest text-xl font-extrabold border rounded-xl outline-none bg-white">
+            </div>
+            
+            <button id="btn-auth-submit" onclick="AuthModule.handleAuth()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-lg">Đăng Nhập</button>
+            
+            <div class="text-center text-xs flex justify-between px-1">
+                <span id="auth-switch-text" class="text-slate-500">Chưa có tài khoản?</span> 
+                <button onclick="AuthModule.toggleAuthMode()" class="text-indigo-600 font-bold hover:underline">Đăng ký ngay</button>
+            </div>
             <button onclick="App.toggleAuthModal()" class="w-full py-2 text-slate-400 font-semibold text-xs">Đóng lại</button>
         </div>
     </div>
@@ -367,56 +468,214 @@
         </div>
     </footer>
 
-    <!-- JAVASCRIPT LOGIC ENGINE -->
-    <script>
-        const Storage = {
-            KEY: 'mathmaster_user_data_v1',
-            KEY_PROFILE: 'mathmaster_user_profile_sync',
-            KEY_ADMIN_THEORY: 'mathmaster_admin_custom_theory',
-            getDefault() {
-                return {
-                    xp: 0, level: 1, streak: 1,
-                    lastActiveDate: new Date().toISOString().split('T')[0],
-                    totalSolved: 0, correctSolved: 0, bestStreak: 0,
-                    topicStats: {}, badges: ['welcome']
-                };
+    <!-- FIREBASE SDK & APP LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, 
+            signOut, onAuthStateChanged, sendPasswordResetEmail 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { 
+            getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc, increment 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Cấu hình Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyA9dxXmIbEd__0EjaI7kqFNlT18_gwrlA4",
+            authDomain: "mathmaster-app-64474.firebaseapp.com",
+            projectId: "mathmaster-app-64474",
+            storageBucket: "mathmaster-app-64474.firebasestorage.app",
+            messagingSenderId: "472731341311",
+            appId: "1:472731341311:web:8c7d9d615b9cd46f53d7ca",
+            measurementId: "G-N2ZB6TWW29"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- DATABASE & AUTH CONTROLLER ---
+        window.CloudDB = {
+            currentUser: null,
+            userData: {
+                xp: 0, level: 1, streak: 1,
+                totalSolved: 0, correctSolved: 0, bestStreak: 0,
+                topicStats: {}, badges: ['welcome']
             },
-            load() {
-                const data = localStorage.getItem(this.KEY);
-                if (!data) return this.getDefault();
-                try {
-                    const parsed = JSON.parse(data);
-                    const today = new Date().toISOString().split('T')[0];
-                    const last = new Date(parsed.lastActiveDate || today);
-                    const diffDays = Math.floor((new Date(today) - last) / (1000 * 60 * 60 * 24));
-                    if (diffDays > 1) parsed.streak = 1;
-                    parsed.lastActiveDate = today;
-                    return { ...this.getDefault(), ...parsed };
-                } catch(e) { return this.getDefault(); }
+            adminTheory: {},
+            uploadedExams: [],
+
+            init(callback) {
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        this.currentUser = user;
+                        const userRef = doc(db, "users", user.uid);
+                        const docSnap = await getDoc(userRef);
+                        if (docSnap.exists()) {
+                            this.userData = { ...this.userData, ...docSnap.data() };
+                        } else {
+                            await setDoc(userRef, this.userData);
+                        }
+                    } else {
+                        this.currentUser = null;
+                    }
+                    callback(user);
+                });
+
+                onSnapshot(doc(db, "system", "content"), (snap) => {
+                    if (snap.exists()) {
+                        const data = snap.data();
+                        this.adminTheory = data.theory || {};
+                        this.uploadedExams = data.exams || [];
+                    }
+                });
             },
-            save(data) {
-                localStorage.setItem(this.KEY, JSON.stringify(data));
-                this.syncToAdmin(data);
-            },
-            getProfile() {
-                const p = localStorage.getItem(this.KEY_PROFILE);
-                return p ? JSON.parse(p) : { isLoggedIn: false, name: 'Khách', email: '' };
-            },
-            saveProfile(profile) { localStorage.setItem(this.KEY_PROFILE, JSON.stringify(profile)); },
-            syncToAdmin(data) {
-                const profile = this.getProfile();
-                let allUsers = JSON.parse(localStorage.getItem('mathmaster_global_users_sync') || '[]');
-                let idx = allUsers.findIndex(u => u.name === profile.name);
-                const userRecord = {
-                    name: profile.name, isLoggedIn: profile.isLoggedIn, email: profile.email || 'N/A',
-                    solved: data.totalSolved, correct: data.correctSolved, lastActive: new Date().toLocaleDateString('vi-VN')
-                };
-                if (idx >= 0) allUsers[idx] = userRecord;
-                else allUsers.push(userRecord);
-                localStorage.setItem('mathmaster_global_users_sync', JSON.stringify(allUsers));
+
+            async saveProgress(topicId, isCorrect, xpEarned) {
+                if (!this.currentUser) return; 
+                const userRef = doc(db, "users", this.currentUser.uid);
+                
+                this.userData.totalSolved++;
+                if (!this.userData.topicStats[topicId]) this.userData.topicStats[topicId] = { solved: 0, correct: 0 };
+                this.userData.topicStats[topicId].solved++;
+
+                if (isCorrect) {
+                    this.userData.correctSolved++;
+                    this.userData.topicStats[topicId].correct++;
+                    this.userData.xp += xpEarned;
+                    if (this.userData.xp >= this.userData.level * 50) this.userData.level++;
+                }
+
+                await updateDoc(userRef, {
+                    totalSolved: this.userData.totalSolved,
+                    correctSolved: this.userData.correctSolved,
+                    xp: this.userData.xp,
+                    level: this.userData.level,
+                    topicStats: this.userData.topicStats
+                });
             }
         };
 
+        // --- AUTH MODULE (TÍCH HỢP MÃ OTP 6 SỐ EMAILJS & THÔNG SỐ THẬT) ---
+        let isRegisterMode = false;
+        let generatedOtp = null;
+        let pendingRegisterData = null;
+
+        window.AuthModule = {
+            toggleAuthMode() {
+                isRegisterMode = !isRegisterMode;
+                document.getElementById('auth-modal-title').innerText = isRegisterMode ? 'Đăng Ký Tài Khoản Mới' : 'Đăng Nhập Tài Khoản';
+                document.getElementById('register-name-field').classList.toggle('hidden', !isRegisterMode);
+                document.getElementById('otp-verify-section').classList.add('hidden');
+                document.getElementById('auth-form-inputs').classList.remove('hidden');
+                document.getElementById('forgot-password-link').classList.toggle('hidden', isRegisterMode);
+                document.getElementById('btn-auth-submit').innerText = isRegisterMode ? 'Gửi Mã Xác Thực OTP' : 'Đăng Nhập';
+                document.getElementById('auth-switch-text').innerText = isRegisterMode ? 'Đã có tài khoản?' : 'Chưa có tài khoản?';
+            },
+
+            async handleAuth() {
+                const email = document.getElementById('auth-email').value.trim();
+                const password = document.getElementById('auth-password').value;
+                const name = document.getElementById('auth-name').value.trim();
+
+                if (!email || !password) return alert("Vui lòng điền đầy đủ email và mật khẩu!");
+
+                // 1. XỬ LÝ ĐĂNG NHẬP THÔNG THƯỜNG
+                if (!isRegisterMode) {
+                    try {
+                        await signInWithEmailAndPassword(auth, email, password);
+                        alert("🎉 Đăng nhập thành công!");
+                        App.toggleAuthModal();
+                        location.reload();
+                    } catch (error) {
+                        alert("Lỗi đăng nhập: " + error.message);
+                    }
+                    return;
+                }
+
+                // 2. XỬ LÝ ĐĂNG KÝ - BƯỚC 1: SINH VÀ GỬI MÃ OTP 6 SỐ
+                const otpSection = document.getElementById('otp-verify-section');
+                const isOtpVisible = !otpSection.classList.contains('hidden');
+
+                if (!isOtpVisible) {
+                    if (!name) return alert("Vui lòng nhập tên học sinh!");
+                    
+                    // Sinh mã OTP 6 số ngẫu nhiên
+                    generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+                    pendingRegisterData = { email, password, name };
+
+                    const templateParams = {
+                        to_name: name,
+                        to_email: email,
+                        otp_code: generatedOtp
+                    };
+
+                    const btn = document.getElementById('btn-auth-submit');
+                    btn.innerText = "Đang gửi mã OTP...";
+                    btn.disabled = true;
+
+                    try {
+                        // Tích hợp Service ID và Template ID thật của bạn
+                        await emailjs.send('service_43l82sp', 'template_j5c7dzb', templateParams);
+                        
+                        alert("🎉 Mã OTP 6 số đã được gửi thành công đến email: " + email);
+                        otpSection.classList.remove('hidden');
+                        document.getElementById('auth-form-inputs').classList.add('hidden');
+                        btn.innerText = "Xác Nhận Đăng Ký";
+                        btn.disabled = false;
+                    } catch (error) {
+                        alert("Lỗi gửi email OTP: " + (error.text || JSON.stringify(error)));
+                        btn.innerText = "Gửi Mã Xác Thực OTP";
+                        btn.disabled = false;
+                    }
+                } 
+                // 3. XỬ LÝ ĐĂNG KÝ - BƯỚC 2: KIỂM TRA MÃ OTP VÀ TẠO TÀI KHOẢN FIREBASE
+                else {
+                    const enteredOtp = document.getElementById('auth-otp-input').value.trim();
+                    if (enteredOtp !== generatedOtp) {
+                        return alert("❌ Mã OTP không chính xác! Vui lòng kiểm tra lại trong hộp thư email.");
+                    }
+
+                    try {
+                        const res = await createUserWithEmailAndPassword(auth, pendingRegisterData.email, pendingRegisterData.password);
+                        await setDoc(doc(db, "users", res.user.uid), {
+                            name: pendingRegisterData.name, 
+                            email: pendingRegisterData.email, 
+                            xp: 0, level: 1, streak: 1, 
+                            totalSolved: 0, correctSolved: 0, 
+                            bestStreak: 0, topicStats: {}, badges: ['welcome']
+                        });
+                        alert("🎉 Đăng ký tài khoản thành công qua xác thực OTP!");
+                        App.toggleAuthModal();
+                        location.reload();
+                    } catch (error) {
+                        alert("Lỗi tạo tài khoản Firebase: " + error.message);
+                    }
+                }
+            },
+
+            async forgotPassword() {
+                const email = document.getElementById('auth-email').value.trim();
+                if (!email) {
+                    alert("Vui lòng nhập Email của bạn vào ô 'Email của bạn' trước khi bấm Quên mật khẩu!");
+                    return;
+                }
+                try {
+                    await sendPasswordResetEmail(auth, email);
+                    alert("🎉 Đã gửi email khôi phục mật khẩu! Vui lòng kiểm tra hộp thư đến (hoặc thư rác / Spam) của bạn.");
+                } catch (error) {
+                    alert("Lỗi gửi email khôi phục: " + error.message);
+                }
+            },
+
+            async logout() {
+                await signOut(auth);
+                alert("Đã đăng xuất!");
+                location.reload();
+            }
+        };
+
+        // --- MATH APP ENGINE ---
         const MathGenerator = {
             randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; },
             generators: {
@@ -456,30 +715,29 @@
         };
 
         const DefaultTheoryData = {
-            'g1_add_sub': { title: 'Cộng Trừ Cơ Bản (Phạm vi 20)', def: 'Phép cộng gộp nhóm, phép trừ bớt phần tử.', tips: 'Đếm tiến hoặc lùi.', ex: '5 + 3 = 8.' },
-            'g1_compare': { title: 'So Sánh Số (>, <, =)', def: 'So sánh giá trị số tự nhiên.', tips: 'So sánh từ hàng cao xuống hàng thấp.', ex: '15 < 23.' },
-            'g2_mental_mul': { title: 'Tính Nhẩm Nhân (Bảng 2-5)', def: 'Bảng nhân cơ bản.', tips: 'Học thuộc quy luật nhân.', ex: '2 × 5 = 10.' },
-            'g6_integers': { title: 'Số Nguyên & Dấu', def: 'Tập hợp Z gồm số âm và dương.', tips: 'Lấy hiệu tuyệt đối mang dấu số lớn.', ex: '(-5) + 8 = 3.' }
+            'g1_add_sub': { title: 'Cộng Trừ Cơ Bản (Phạm vi 20)', practiceTime: 30, hint: 'Dùng ngón tay hoặc đếm tiến/lùi.', def: 'Phép cộng gộp hai nhóm số lại với nhau.', tips: 'Dùng ngón tay đếm tiến/lùi.', ex: '5 + 4 = 9.' },
+            'g1_compare': { title: 'So Sánh Số (>, <, =)', practiceTime: 30, hint: 'So sánh chữ số ở hàng chục trước.', def: 'So sánh giá trị số tự nhiên.', tips: 'So sánh từ hàng cao tới thấp.', ex: '15 < 23.' }
         };
+
+        const DefaultExamsData = [
+            { id: 'ex_101', grade: 1, title: 'Đề Kiểm Tra Định Kỳ Lớp 1 - Chuyên Đề Phép Cộng Trừ', duration: 30, fileName: 'De_Kiem_Tra_Lop_1_AddSub.pdf', topicId: 'g1_add_sub' }
+        ];
 
         const Badges = [
             { id: 'welcome', title: 'Tân Thủ MathMaster', desc: 'Tham gia ứng dụng luyện tập', icon: 'fa-user-ninja', color: 'text-indigo-500' },
             { id: 'streak_3', title: 'Kiên Trì 3 Ngày', desc: 'Duy trì chuỗi học 3 ngày liên tiếp', icon: 'fa-fire', color: 'text-amber-500' },
             { id: 'solved_10', title: 'Thần Đồng Tính Nhẩm', desc: 'Giải thành công 10 bài toán', icon: 'fa-bolt', color: 'text-blue-500' },
             { id: 'solved_50', title: 'Bậc Thầy Toán Học', desc: 'Giải thành công 50 bài toán', icon: 'fa-graduation-cap', color: 'text-purple-500' },
-            { id: 'accuracy_80', title: 'Chính Xác Tuyệt Đối', desc: 'Đạt tỷ lệ đúng trên 80%', icon: 'fa-bullseye', color: 'text-emerald-500' },
-            { id: 'timed_master', title: 'Vua Tốc Độ', desc: 'Hoàn thành lượt thi tính giờ', icon: 'fa-stopwatch', color: 'text-rose-500' }
+            { id: 'accuracy_80', title: 'Chính Xác Tuyệt Đối', desc: 'Đạt tỷ lệ đúng trên 80%', icon: 'fa-bullseye', color: 'text-emerald-500' }
         ];
 
-        const App = {
-            userData: null,
-            userProfile: null,
+        window.App = {
             currentGrade: 1,
             currentTopic: 'g1_add_sub',
-            currentMode: 'free', // 'free' | 'test'
+            currentMode: 'free',
             currentQuestion: null,
             timerInterval: null,
-            timerSeconds: 1800, // 30 phút cho bài kiểm tra
+            timerSeconds: 30,
 
             gradeTopics: {
                 1: [
@@ -491,11 +749,11 @@
             },
 
             init() {
-                this.userData = Storage.load();
-                this.userProfile = Storage.getProfile();
-                this.updateHeaderStats();
-                this.renderGradeTabs();
-                this.navigateTo('dashboard');
+                CloudDB.init((user) => {
+                    this.updateHeaderStats(user);
+                    this.renderGradeTabs();
+                    this.navigateTo('dashboard');
+                });
             },
 
             navigateTo(viewId) {
@@ -516,36 +774,34 @@
                 if (viewId === 'achievements') this.renderAchievements();
             },
 
-            updateHeaderStats() {
-                document.getElementById('user-streak-display').innerText = this.userData.streak;
-                document.getElementById('user-level-display').innerText = this.userData.level;
-                document.getElementById('user-xp-display').innerText = `${this.userData.xp} XP`;
-                document.getElementById('header-user-name').innerText = this.userProfile.isLoggedIn ? `${this.userProfile.name} (Đã ĐN)` : 'Khách (Chưa ĐN)';
+            updateHeaderStats(user) {
+                const badge = document.getElementById('header-user-name');
+                if (user) {
+                    badge.innerHTML = `${CloudDB.userData.name || user.email} <span class="text-rose-500 ml-1" onclick="event.stopPropagation(); AuthModule.logout()" title="Đăng xuất"><i class="fa-solid fa-right-from-bracket"></i></span>`;
+                } else {
+                    badge.innerHTML = 'Đăng Nhập / Đăng Ký';
+                }
+                document.getElementById('user-streak-display').innerText = CloudDB.userData.streak || 1;
+                document.getElementById('user-level-display').innerText = CloudDB.userData.level || 1;
+                document.getElementById('user-xp-display').innerText = `${CloudDB.userData.xp || 0} XP`;
             },
 
-            toggleAuthModal() { document.getElementById('auth-modal').classList.toggle('hidden'); },
-
-            loginUser() {
-                const name = document.getElementById('login-name').value;
-                const email = document.getElementById('login-email').value;
-                if (!name) return alert("Vui lòng nhập tên học sinh!");
-
-                this.userProfile.isLoggedIn = true;
-                this.userProfile.name = name;
-                this.userProfile.email = email || 'Khách ĐK';
-                Storage.saveProfile(this.userProfile);
-                Storage.save(this.userData);
-                this.updateHeaderStats();
-                this.toggleAuthModal();
-                alert(`Xin chào ${name}, bạn đã đăng nhập thành công!`);
+            toggleAuthModal() { 
+                if (CloudDB.currentUser) {
+                    if (confirm("Bạn có muốn đăng xuất tài khoản không?")) AuthModule.logout();
+                } else {
+                    document.getElementById('auth-modal').classList.toggle('hidden'); 
+                }
             },
 
             renderDashboard() {
-                document.getElementById('dash-total-solved').innerText = this.userData.totalSolved;
-                const acc = this.userData.totalSolved > 0 ? Math.round((this.userData.correctSolved / this.userData.totalSolved) * 100) : 0;
+                document.getElementById('dash-total-solved').innerText = CloudDB.userData.totalSolved || 0;
+                const total = CloudDB.userData.totalSolved || 0;
+                const correct = CloudDB.userData.correctSolved || 0;
+                const acc = total > 0 ? Math.round((correct / total) * 100) : 0;
                 document.getElementById('dash-accuracy').innerText = `${acc}%`;
-                document.getElementById('dash-badge-count').innerText = `${this.userData.badges.length}/${Badges.length}`;
-                document.getElementById('dash-best-streak').innerText = this.userData.bestStreak;
+                document.getElementById('dash-badge-count').innerText = `${(CloudDB.userData.badges || []).length}/${Badges.length}`;
+                document.getElementById('dash-best-streak').innerText = CloudDB.userData.bestStreak || 1;
             },
 
             selectGrade(grade) {
@@ -587,10 +843,57 @@
                 if (mode === 'free') {
                     freeCard.className = 'cursor-pointer border-2 border-indigo-600 bg-indigo-50/50 p-4 rounded-2xl flex items-center gap-4 transition';
                     testCard.className = 'cursor-pointer border-2 border-slate-200 hover:border-indigo-300 p-4 rounded-2xl flex items-center gap-4 transition';
-                } else {
-                    testCard.className = 'cursor-pointer border-2 border-rose-500 bg-rose-50/50 p-4 rounded-2xl flex items-center gap-4 transition';
-                    freeCard.className = 'cursor-pointer border-2 border-slate-200 hover:border-indigo-300 p-4 rounded-2xl flex items-center gap-4 transition';
                 }
+            },
+
+            openExamList() {
+                this.setMode('test');
+                document.getElementById('exam-grade-badge').innerText = `Đề Thi Lớp ${this.currentGrade}`;
+                
+                const allExams = CloudDB.uploadedExams.length > 0 ? CloudDB.uploadedExams : DefaultExamsData;
+                const gradeExams = allExams.filter(e => e.grade === this.currentGrade);
+
+                const container = document.getElementById('uploaded-exams-container');
+
+                if (gradeExams.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-10 bg-slate-50 rounded-2xl border border-slate-200 text-slate-500 space-y-2">
+                            <i class="fa-solid fa-folder-open text-4xl text-slate-300"></i>
+                            <p class="text-sm font-semibold">Chưa có đề kiểm tra nào cho Lớp ${this.currentGrade} từ Cloud Database.</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = gradeExams.map(ex => `
+                        <div class="exam-card bg-white p-5 rounded-2xl border border-slate-200 hover:border-rose-400 hover:shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl font-bold shadow-sm">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                </div>
+                                <div class="space-y-0.5">
+                                    <h4 class="font-bold text-slate-800 text-base">${ex.title}</h4>
+                                    <div class="flex items-center gap-3 text-xs text-slate-500 font-semibold">
+                                        <span><i class="fa-solid fa-clock text-amber-500 mr-1"></i>${ex.duration} phút</span>
+                                        <span>•</span>
+                                        <span><i class="fa-solid fa-paperclip text-slate-400 mr-1"></i>${ex.fileName}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="App.startExamTest('${ex.id}', ${ex.duration}, '${ex.topicId || 'g1_add_sub'}')" class="w-full sm:w-auto px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-play"></i> Bắt Đầu Làm Bài
+                            </button>
+                        </div>
+                    `).join('');
+                }
+
+                this.navigateTo('exam-list');
+            },
+
+            startExamTest(examId, durationMinutes, topicId) {
+                this.currentTopic = topicId;
+                this.navigateTo('practice-room');
+                document.getElementById('practice-grade-badge').innerText = `Thi Lớp ${this.currentGrade}`;
+                this.startTimer(durationMinutes * 60, `Hết ${durationMinutes} phút làm bài kiểm tra!`);
+                this.loadNextQuestion();
             },
 
             renderPracticeSelect() {
@@ -605,41 +908,73 @@
                     return;
                 }
 
-                // Thêm nút Lý thuyết và Luyện tập trực tiếp dưới mỗi dạng toán
-                grid.innerHTML = topics.map(t => `
-                    <div class="topic-card bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-500 hover:shadow-md flex flex-col justify-between space-y-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg">
-                                <i class="fa-solid ${t.icon}"></i>
+                grid.innerHTML = topics.map(t => {
+                    const customTitle = CloudDB.adminTheory[t.id]?.title || t.name;
+                    const solvedCount = CloudDB.userData.topicStats?.[t.id]?.solved || 0;
+
+                    return `
+                        <div class="topic-card bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-500 hover:shadow-md flex flex-col justify-between space-y-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg">
+                                    <i class="fa-solid ${t.icon}"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 text-sm">${customTitle}</h4>
+                                    <span class="text-xs text-slate-400">Đã làm: ${solvedCount} bài</span>
+                                </div>
                             </div>
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-sm">${t.name}</h4>
-                                <span class="text-xs text-slate-400">Đã làm: ${this.userData.topicStats[t.id]?.solved || 0} bài</span>
+                            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+                                <button onclick="App.openTheory('${t.id}')" class="py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-book text-indigo-600"></i> Lý thuyết
+                                </button>
+                                <button onclick="App.startPractice('${t.id}')" class="py-2 px-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Luyện tập
+                                </button>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
-                            <button onclick="App.openTheory('${t.id}')" class="py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
-                                <i class="fa-solid fa-book text-indigo-600"></i> Lý thuyết
-                            </button>
-                            <button onclick="App.startPractice('${t.id}')" class="py-2 px-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
-                                <i class="fa-solid fa-play"></i> Luyện tập
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             },
 
             openTheory(topicId) {
                 this.currentTopic = topicId;
-                const adminTheory = JSON.parse(localStorage.getItem(Storage.KEY_ADMIN_THEORY) || '{}');
-                const theory = adminTheory[topicId] || DefaultTheoryData[topicId] || { title: 'Lý thuyết toán', def: 'Nội dung cơ bản.', tips: 'Mẹo tính nhanh.', ex: 'Ví dụ mẫu.' };
+                const theory = CloudDB.adminTheory[topicId] || DefaultTheoryData[topicId] || { title: 'Lý thuyết toán' };
                 
                 document.getElementById('theory-grade-badge').innerText = `Lớp ${this.currentGrade}`;
                 document.getElementById('theory-title').innerText = theory.title;
-                document.getElementById('theory-definition').innerText = theory.def;
-                document.getElementById('theory-tips').innerText = theory.tips;
-                document.getElementById('theory-example').innerText = theory.ex;
                 this.navigateTo('theory');
+            },
+
+            openTheoryDetail(sectionType) {
+                const theory = CloudDB.adminTheory[this.currentTopic] || DefaultTheoryData[this.currentTopic] || {};
+
+                document.getElementById('theory-detail-topic-badge').innerText = theory.title || `Lớp ${this.currentGrade}`;
+                
+                const container = document.getElementById('theory-detail-container');
+                const titleEl = document.getElementById('theory-detail-section-title');
+                const contentEl = document.getElementById('theory-detail-content');
+
+                if (sectionType === 'def') {
+                    container.className = "p-6 rounded-2xl space-y-3 bg-indigo-50 border border-indigo-200";
+                    titleEl.className = "text-xl font-bold flex items-center gap-2 text-indigo-900";
+                    titleEl.innerHTML = `<i class="fa-solid fa-book-bookmark text-indigo-600"></i> Định nghĩa & Công thức trọng tâm`;
+                    contentEl.className = "text-base font-medium leading-relaxed pt-3 border-t border-indigo-200 text-indigo-950";
+                    contentEl.innerText = theory.def || "Chưa có dữ liệu định nghĩa.";
+                } else if (sectionType === 'tips') {
+                    container.className = "p-6 rounded-2xl space-y-3 bg-amber-50 border border-amber-200";
+                    titleEl.className = "text-xl font-bold flex items-center gap-2 text-amber-900";
+                    titleEl.innerHTML = `<i class="fa-solid fa-lightbulb text-amber-500"></i> Mẹo tính toán & Lưu ý quan trọng`;
+                    contentEl.className = "text-base font-medium leading-relaxed pt-3 border-t border-amber-200 text-amber-950";
+                    contentEl.innerText = theory.tips || "Chưa có dữ liệu mẹo tính toán.";
+                } else if (sectionType === 'ex') {
+                    container.className = "p-6 rounded-2xl space-y-3 bg-emerald-50 border border-emerald-200";
+                    titleEl.className = "text-xl font-bold flex items-center gap-2 text-emerald-900";
+                    titleEl.innerHTML = `<i class="fa-solid fa-pencil text-emerald-600"></i> Ví dụ mẫu minh họa`;
+                    contentEl.className = "text-base font-medium leading-relaxed pt-3 border-t border-emerald-200 text-emerald-950";
+                    contentEl.innerText = theory.ex || "Chưa có ví dụ minh họa.";
+                }
+
+                this.navigateTo('theory-detail');
             },
 
             startPractice(topicId) {
@@ -647,18 +982,14 @@
                 this.navigateTo('practice-room');
                 document.getElementById('practice-grade-badge').innerText = `Lớp ${this.currentGrade}`;
 
-                if (this.currentMode === 'test') {
-                    document.getElementById('timer-box').classList.remove('hidden');
-                    this.startTimer(1800); // 30 phút
-                } else {
-                    document.getElementById('timer-box').classList.add('hidden');
-                    clearInterval(this.timerInterval);
-                }
+                const topicData = CloudDB.adminTheory[topicId] || DefaultTheoryData[topicId] || {};
+                const pTime = topicData.practiceTime || 30;
+                this.startTimer(pTime, 'Hết thời gian cho câu hỏi này!');
 
                 this.loadNextQuestion();
             },
 
-            startTimer(seconds) {
+            startTimer(seconds, timeUpMsg) {
                 this.timerSeconds = seconds;
                 document.getElementById('timer-counter').innerText = this.timerSeconds;
                 clearInterval(this.timerInterval);
@@ -666,19 +997,32 @@
                 this.timerInterval = setInterval(() => {
                     this.timerSeconds--;
                     document.getElementById('timer-counter').innerText = this.timerSeconds;
-                    if (this.timerSeconds <= 60) document.getElementById('timer-box').classList.add('timer-warning');
+                    
+                    if (this.timerSeconds <= 5) document.getElementById('timer-box').classList.add('timer-warning');
+                    
                     if (this.timerSeconds <= 0) {
                         clearInterval(this.timerInterval);
-                        alert("Hết 30 phút làm bài kiểm tra!");
-                        this.exitPractice();
+                        alert(timeUpMsg);
+                        if (this.currentMode === 'free') {
+                            this.nextQuestion();
+                        } else {
+                            this.exitPractice();
+                        }
                     }
                 }, 1000);
             },
 
             loadNextQuestion() {
+                document.getElementById('hint-box').classList.add('hidden');
                 document.getElementById('solution-box').classList.add('hidden');
                 document.getElementById('btn-submit-answer').classList.remove('hidden');
                 document.getElementById('btn-next-question').classList.add('hidden');
+
+                if (this.currentMode === 'free') {
+                    const topicData = CloudDB.adminTheory[this.currentTopic] || DefaultTheoryData[this.currentTopic] || {};
+                    const pTime = topicData.practiceTime || 30;
+                    this.startTimer(pTime, 'Hết thời gian cho câu hỏi này!');
+                }
 
                 this.currentQuestion = MathGenerator.generate(this.currentTopic);
                 document.getElementById('question-text').innerText = this.currentQuestion.question;
@@ -708,29 +1052,25 @@
                 this.selectedAnswer = val;
             },
 
-            checkAnswer() {
+            async checkAnswer() {
                 if (!this.selectedAnswer) return alert("Vui lòng chọn một đáp án!");
+                
+                clearInterval(this.timerInterval);
 
                 const isCorrect = (this.selectedAnswer === this.currentQuestion.answer);
-                this.userData.totalSolved++;
-                if (!this.userData.topicStats[this.currentTopic]) this.userData.topicStats[this.currentTopic] = { solved: 0, correct: 0 };
-                this.userData.topicStats[this.currentTopic].solved++;
 
                 if (isCorrect) {
-                    this.userData.correctSolved++;
-                    this.userData.topicStats[this.currentTopic].correct++;
-                    this.userData.xp += 10 * (this.currentMode === 'test' ? 2 : 1);
                     confetti({ particleCount: 60, spread: 60, origin: { y: 0.7 } });
-                    if (this.userData.xp >= this.userData.level * 50) this.userData.level++;
                 }
+
+                await CloudDB.saveProgress(this.currentTopic, isCorrect, 10);
 
                 document.getElementById('solution-text').innerText = this.currentQuestion.solution;
                 document.getElementById('solution-box').classList.remove('hidden');
                 document.getElementById('btn-submit-answer').classList.add('hidden');
                 document.getElementById('btn-next-question').classList.remove('hidden');
 
-                Storage.save(this.userData);
-                this.updateHeaderStats();
+                this.updateHeaderStats(CloudDB.currentUser);
             },
 
             nextQuestion() {
@@ -739,8 +1079,9 @@
             },
 
             toggleHint() {
-                const box = document.getElementById('solution-box');
-                document.getElementById('solution-text').innerText = this.currentQuestion.solution;
+                const box = document.getElementById('hint-box');
+                const topicData = CloudDB.adminTheory[this.currentTopic] || DefaultTheoryData[this.currentTopic] || {};
+                document.getElementById('hint-text').innerText = topicData.hint || 'Hãy quan sát kỹ phép tính và áp dụng các công thức đã học!';
                 box.classList.toggle('hidden');
             },
 
@@ -751,9 +1092,11 @@
             },
 
             renderStats() {
-                document.getElementById('stats-solved-count').innerText = this.userData.totalSolved;
-                document.getElementById('stats-correct-count').innerText = this.userData.correctSolved;
-                const acc = this.userData.totalSolved > 0 ? Math.round((this.userData.correctSolved / this.userData.totalSolved) * 100) : 0;
+                document.getElementById('stats-solved-count').innerText = CloudDB.userData.totalSolved || 0;
+                document.getElementById('stats-correct-count').innerText = CloudDB.userData.correctSolved || 0;
+                const total = CloudDB.userData.totalSolved || 0;
+                const correct = CloudDB.userData.correctSolved || 0;
+                const acc = total > 0 ? Math.round((correct / total) * 100) : 0;
                 document.getElementById('stats-accuracy-rate').innerText = `${acc}%`;
 
                 const breakdown = document.getElementById('stats-grade-breakdown');
@@ -762,7 +1105,7 @@
                     const topics = this.gradeTopics[g] || [];
                     let gradeSolved = 0, gradeCorrect = 0;
                     topics.forEach(t => {
-                        const st = this.userData.topicStats[t.id];
+                        const st = CloudDB.userData.topicStats?.[t.id];
                         if (st) { gradeSolved += st.solved; gradeCorrect += st.correct; }
                     });
                     const pct = gradeSolved > 0 ? Math.round((gradeCorrect / gradeSolved) * 100) : 0;
@@ -783,8 +1126,9 @@
 
             renderAchievements() {
                 const container = document.getElementById('badges-grid');
+                const userBadges = CloudDB.userData.badges || ['welcome'];
                 container.innerHTML = Badges.map(b => {
-                    const unlocked = this.userData.badges.includes(b.id);
+                    const unlocked = userBadges.includes(b.id);
                     return `
                         <div class="bg-white p-5 rounded-2xl border ${unlocked ? 'border-amber-300 shadow-sm' : 'border-slate-200 opacity-60'} flex items-center gap-4">
                             <div class="w-12 h-12 rounded-2xl ${unlocked ? 'bg-amber-100' : 'bg-slate-100'} flex items-center justify-center text-2xl ${b.color}">
