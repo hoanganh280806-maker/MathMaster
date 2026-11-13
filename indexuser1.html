@@ -455,9 +455,7 @@
 
             <!-- Khung Đặt Lại Mật Khẩu -->
             <div id="reset-password-section" class="hidden space-y-3">
-                <p class="text-xs text-slate-500 text-center mb-1">Nhập mật khẩu mới cho tài khoản của bạn</p>
-                <input type="password" id="auth-new-password" placeholder="Mật khẩu mới..." class="w-full p-3 border rounded-xl text-sm outline-none">
-                <input type="password" id="auth-confirm-password" placeholder="Xác nhận mật khẩu mới..." class="w-full p-3 border rounded-xl text-sm outline-none">
+                <p class="text-xs text-slate-500 text-center mb-1">Nhập email tài khoản của bạn để nhận liên kết đặt lại mật khẩu</p>
             </div>
 
             <!-- Khung Nhập Mã OTP (Chỉ hiển thị ở Bước 2 Đăng Ký) -->
@@ -488,7 +486,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
             getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, 
-            signOut, onAuthStateChanged, updatePassword 
+            signOut, onAuthStateChanged, sendPasswordResetEmail 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { 
             getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc 
@@ -646,40 +644,32 @@
 
             forgotPassword() {
                 isResetPasswordMode = true;
-                document.getElementById('auth-form-inputs').classList.add('hidden');
+                document.getElementById('auth-form-inputs').classList.remove('hidden'); // Giữ lại ô email để người dùng nhập
+                document.getElementById('auth-password').closest('div')?.previousElementSibling ? null : null;
+                document.getElementById('auth-password').style.display = 'none'; // Ẩn ô mật khẩu đi chỉ giữ ô email
                 document.getElementById('forgot-password-link').classList.add('hidden');
                 document.getElementById('reset-password-section').classList.remove('hidden');
                 document.getElementById('auth-back-btn').classList.remove('hidden');
                 
-                document.getElementById('auth-modal-title').innerText = 'Đặt Lại Mật Khẩu';
-                document.getElementById('btn-auth-submit').innerText = 'Đổi Mật Khẩu';
+                document.getElementById('auth-modal-title').innerText = 'Quên Mật Khẩu';
+                document.getElementById('btn-auth-submit').innerText = 'Gửi Link Đặt Lại Mật Khẩu';
                 document.getElementById('btn-auth-submit').onclick = () => AuthModule.submitNewPassword();
             },
 
             async submitNewPassword() {
-                const newPass = document.getElementById('auth-new-password').value;
-                const confirmPass = document.getElementById('auth-confirm-password').value;
+                const email = document.getElementById('auth-email').value.trim();
 
-                if (!newPass || !confirmPass) {
-                    return alert("Vui lòng nhập đầy đủ mật khẩu mới và xác nhận!");
-                }
-                if (newPass !== confirmPass) {
-                    return alert("❌ Mật khẩu xác nhận không khớp!");
+                if (!email) {
+                    return alert("Vui lòng nhập email tài khoản của bạn vào ô email!");
                 }
 
-                if (auth.currentUser) {
-                    try {
-                        await updatePassword(auth.currentUser, newPass);
-                        alert("🎉 Xác nhận đổi mật khẩu thành công!");
-                        document.getElementById('auth-modal').classList.add('hidden');
-                        location.reload();
-                    } catch (error) {
-                        alert("Lỗi đổi mật khẩu (vui lòng đăng nhập lại trước khi đổi): " + error.message);
-                    }
-                } else {
-                    alert("🎉 Xác nhận đổi mật khẩu thành công! Vui lòng đăng nhập lại bằng mật khẩu mới.");
-                    document.getElementById('auth-modal').classList.add('hidden');
-                    location.reload();
+                try {
+                    await sendPasswordResetEmail(auth, email);
+                    alert("🎉 Hệ thống đã gửi một đường dẫn đặt lại mật khẩu đến email: " + email + ". Vui lòng kiểm tra hộp thư!");
+                    document.getElementById('auth-password').style.display = 'block';
+                    AuthModule.goBackToLogin();
+                } catch (error) {
+                    alert("Lỗi gửi email đặt lại mật khẩu: " + error.message);
                 }
             },
 
