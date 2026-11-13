@@ -727,12 +727,17 @@
                 }
 
                 try {
-                    // Cập nhật mật khẩu bằng cách đổi trực tiếp thông qua việc xác thực hoặc lưu ý ghi nhận
-                    alert("🎉 Đã thiết lập mật khẩu mới thành công cho email: " + resetTargetEmail + "! Vui lòng đăng nhập lại bằng mật khẩu mới.");
+                    // Vì bảo mật của Firebase, để đổi được mật khẩu, tài khoản cần đăng nhập tạm thời bằng email và mật khẩu cũ, 
+                    // hoặc nếu dùng cơ chế link reset chính hãng của Firebase. 
+                    // Cách tối ưu và đơn giản nhất cho ứng dụng web tĩnh là dùng hàm sendPasswordResetEmail gốc của Firebase.
+                    
+                    await sendPasswordResetEmail(auth, resetTargetEmail);
+                    
+                    alert("🎉 Hệ thống đã xác nhận! Vui lòng kiểm tra email để bấm vào link chính thức của Firebase nhằm cập nhật mật khẩu mới.");
                     document.getElementById('auth-modal').classList.add('hidden');
                     AuthModule.goBackToLogin();
                 } catch (error) {
-                    alert("Lỗi đổi mật khẩu: " + error.message);
+                    alert("Lỗi cập nhật mật khẩu: " + error.message);
                 }
             },
 
