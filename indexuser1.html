@@ -36,59 +36,52 @@
 
     <!-- HEADER / NAVIGATION -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
+        <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 gap-1">
                 <!-- Logo -->
-                <div class="flex items-center gap-3 cursor-pointer" onclick="App.navigateTo('dashboard')">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white font-black text-xl shadow-md shadow-indigo-200">
+                <div class="flex items-center gap-2 cursor-pointer shrink-0" onclick="App.navigateTo('dashboard')">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white font-black text-lg sm:text-xl shadow-md shadow-indigo-200">
                         <i class="fa-solid font-bold fa-calculator"></i>
                     </div>
                     <div>
-                        <span class="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">MathMaster</span>
-                        <span class="hidden sm:inline-block text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100 ml-2">Cấp 1 & 2</span>
+                        <span class="text-base sm:text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">MathMaster</span>
+                        <span class="hidden lg:inline-block text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100 ml-1">Cấp 1 & 2</span>
                     </div>
                 </div>
 
-                <!-- Navigation Links -->
-                <nav class="hidden md:flex items-center gap-2">
-                    <button onclick="App.navigateTo('dashboard')" id="nav-dashboard" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold text-indigo-600 bg-indigo-50">
-                        <i class="fa-solid fa-house mr-1.5"></i> Trang Chủ
+                <!-- Navigation Links (Responsive optimized) -->
+                <nav class="flex items-center gap-1 sm:gap-2">
+                    <button onclick="App.navigateTo('dashboard')" id="nav-dashboard" class="tab-btn p-2 sm:px-3 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold text-indigo-600 bg-indigo-50 flex items-center gap-1" title="Trang Chủ">
+                        <i class="fa-solid fa-house"></i> <span class="hidden md:inline">Trang Chủ</span>
                     </button>
-                    <button onclick="App.navigateTo('practice-select')" id="nav-practice" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-indigo-600 hover:bg-slate-50">
-                        <i class="fa-solid fa-gamepad mr-1.5"></i> Luyện Tập
+                    <button onclick="App.navigateTo('practice-select')" id="nav-practice" class="tab-btn p-2 sm:px-3 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-indigo-600 hover:bg-slate-50 flex items-center gap-1" title="Luyện Tập">
+                        <i class="fa-solid fa-gamepad"></i> <span class="hidden md:inline">Luyện Tập</span>
                     </button>
-                    <button onclick="App.navigateTo('stats')" id="nav-stats" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-indigo-600 hover:bg-slate-50">
-                        <i class="fa-solid fa-chart-pie mr-1.5"></i> Thống Kê
+                    <button onclick="App.navigateTo('stats')" id="nav-stats" class="tab-btn p-2 sm:px-3 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-indigo-600 hover:bg-slate-50 flex items-center gap-1" title="Thống Kê">
+                        <i class="fa-solid fa-chart-pie"></i> <span class="hidden md:inline">Thống Kê</span>
                     </button>
-                    <button onclick="App.navigateTo('achievements')" id="nav-achievements" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-indigo-600 hover:bg-slate-50">
-                        <i class="fa-solid fa-trophy mr-1.5"></i> Thành Tích
+                    <button onclick="App.navigateTo('achievements')" id="nav-achievements" class="tab-btn p-2 sm:px-3 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-indigo-600 hover:bg-slate-50 flex items-center gap-1" title="Thành Tích">
+                        <i class="fa-solid fa-trophy"></i> <span class="hidden md:inline">Thành Tích</span>
                     </button>
                 </nav>
 
                 <!-- User Profile & Stats Widget -->
-                <div class="flex items-center gap-3">
-                    <div id="user-profile-container" class="flex items-center gap-2">
+                <div class="flex items-center gap-2 shrink-0">
+                    <div id="user-profile-container" class="flex items-center gap-1.5">
                         <!-- Nút hiển thị tên học sinh hoặc đăng nhập -->
-                        <div id="user-profile-badge" class="flex items-center gap-2 cursor-pointer bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold transition" onclick="App.handleProfileClick()">
-                            <i class="fa-solid fa-user-circle text-indigo-600 text-base"></i>
-                            <span id="header-user-name">Đăng Nhập / Đăng Ký</span>
+                        <div id="user-profile-badge" class="flex items-center gap-1.5 cursor-pointer bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-xl text-xs font-bold transition" onclick="App.handleProfileClick()">
+                            <i class="fa-solid fa-user-circle text-indigo-600 text-sm sm:text-base"></i>
+                            <span id="header-user-name" class="max-w-[70px] sm:max-w-[100px] truncate">Đăng Nhập</span>
                         </div>
                         <!-- Nút Đăng Xuất -->
-                        <button id="btn-header-logout" onclick="AuthModule.logout()" class="hidden flex items-center gap-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-xl font-bold text-xs transition" title="Đăng xuất tài khoản">
+                        <button id="btn-header-logout" onclick="AuthModule.logout()" class="hidden flex items-center gap-1 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-2 py-1.5 rounded-xl font-bold text-xs transition" title="Đăng xuất tài khoản">
                             <i class="fa-solid fa-right-from-bracket"></i>
-                            <span class="hidden sm:inline">Đăng xuất</span>
                         </button>
                     </div>
 
-                    <div class="flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-700 px-3 py-1.5 rounded-xl font-bold text-sm">
+                    <div class="flex items-center gap-1 bg-amber-50 border border-amber-200 text-amber-700 px-2.5 py-1.5 rounded-xl font-bold text-xs sm:text-sm">
                         <i class="fa-solid fa-fire text-amber-500 animate-bounce"></i>
                         <span id="user-streak-display">1</span>
-                    </div>
-                    <div class="hidden sm:flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-xl text-sm font-bold text-indigo-700">
-                        <i class="fa-solid fa-star text-amber-400"></i>
-                        <span>Lv.<span id="user-level-display">1</span></span>
-                        <span class="text-indigo-300">|</span>
-                        <span id="user-xp-display" class="text-xs text-indigo-600">0 XP</span>
                     </div>
                 </div>
             </div>
@@ -916,7 +909,7 @@
                     badge.innerHTML = `<span class="text-indigo-700 font-extrabold">${studentName}</span>`;
                     logoutBtn.classList.remove('hidden');
                 } else {
-                    badge.innerHTML = 'Đăng Nhập / Đăng Ký';
+                    badge.innerHTML = 'Đăng Nhập';
                     logoutBtn.classList.add('hidden');
                 }
 
