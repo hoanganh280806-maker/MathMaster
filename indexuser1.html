@@ -676,25 +676,24 @@
                 btn.disabled = true;
 
                 try {
-                    // Tạo một token hoặc link đơn giản để truyền vào template EmailJS
                     const resetToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
-                    const resetLink = window.location.origin + "#reset=" + resetToken;
+                    // Tạo đường link quay lại trang web kèm theo email và token
+                    const resetLink = `${window.location.origin}${window.location.pathname}?resetEmail=${encodeURIComponent(email)}&token=${resetToken}`;
 
-                    // Các tham số khớp với template trong EmailJS của bạn
                     const templateParams = {
-                        to_email: email,
-                        email: email,
-                        link: resetLink
+                        email: email, // Khớp với biến {{email}} ở ô To Email trên EmailJS
+                        link: resetLink // Khớp với biến {{link}} trong nội dung email
                     };
 
-                    // Gọi EmailJS với Service ID và Template ID của bạn
-                    await emailjs.send('service_43l82sp', 'template_j5c7dzb', templateParams);
+                    // THAY 'template_ojh811g' BẰNG ĐÚNG TEMPLATE ID TRONG TAB SETTINGS CỦA MẪU PASSWORD RESET
+                    await emailjs.send('service_43l82sp', 'template_15zz3dr', templateParams);
 
-                    alert("🎉 Hệ thống đã gửi email đặt lại mật khẩu đến: " + email + ". Vui lòng kiểm tra hộp thư của bạn!");
+                    alert("🎉 Hệ thống đã gửi yêu cầu đặt lại mật khẩu đến: " + email + ". Vui lòng kiểm tra hộp thư và nhấn vào liên kết!");
                     document.getElementById('auth-password').style.display = 'block';
                     AuthModule.goBackToLogin();
                 } catch (error) {
                     alert("Lỗi gửi email đặt lại mật khẩu: " + (error.text || error.message || JSON.stringify(error)));
+                } finally {
                     btn.innerText = "Gửi Yêu Cầu Đặt Lại Mật Khẩu";
                     btn.disabled = false;
                 }
