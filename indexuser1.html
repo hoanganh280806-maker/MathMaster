@@ -660,7 +660,7 @@
                 document.getElementById('auth-back-btn').classList.remove('hidden');
                 
                 document.getElementById('auth-modal-title').innerText = 'Quên Mật Khẩu';
-                document.getElementById('btn-auth-submit').innerText = 'Gửi Link Đặt Lại Mật Khẩu';
+                document.getElementById('btn-auth-submit').innerText = 'Gửi Yêu Cầu Đặt Lại Mật Khẩu';
                 document.getElementById('btn-auth-submit').onclick = () => AuthModule.submitResetPassword();
             },
 
@@ -671,13 +671,32 @@
                     return alert("Vui lòng nhập email tài khoản của bạn vào ô email!");
                 }
 
+                const btn = document.getElementById('btn-auth-submit');
+                btn.innerText = "Đang gửi email...";
+                btn.disabled = true;
+
                 try {
-                    await sendPasswordResetEmail(auth, email);
-                    alert("🎉 Hệ thống đã gửi liên kết đặt lại mật khẩu đến email: " + email + ". Vui lòng kiểm tra hộp thư (cả mục Spam nếu cần)!");
+                    // Tạo một token hoặc link đơn giản để truyền vào template EmailJS
+                    const resetToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
+                    const resetLink = window.location.origin + "#reset=" + resetToken;
+
+                    // Các tham số khớp với template trong EmailJS của bạn
+                    const templateParams = {
+                        to_email: email,
+                        email: email,
+                        link: resetLink
+                    };
+
+                    // Gọi EmailJS với Service ID và Template ID của bạn
+                    await emailjs.send('service_43l82sp', 'template_j5c7dzb', templateParams);
+
+                    alert("🎉 Hệ thống đã gửi email đặt lại mật khẩu đến: " + email + ". Vui lòng kiểm tra hộp thư của bạn!");
                     document.getElementById('auth-password').style.display = 'block';
                     AuthModule.goBackToLogin();
                 } catch (error) {
-                    alert("Lỗi gửi email đặt lại mật khẩu: " + error.message);
+                    alert("Lỗi gửi email đặt lại mật khẩu: " + (error.text || error.message || JSON.stringify(error)));
+                    btn.innerText = "Gửi Yêu Cầu Đặt Lại Mật Khẩu";
+                    btn.disabled = false;
                 }
             },
 
