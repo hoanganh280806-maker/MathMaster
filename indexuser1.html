@@ -17,7 +17,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
         (function() {
-            emailjs.init("XbH7oNNM9B1gTAFyJ");
+            emailjs.init("XbH7oNNM9B1gTAFyJ"); // Public Key
         })();
     </script>
 
@@ -31,17 +31,18 @@
         @keyframes timerPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); color: #ef4444; } }
         .timer-warning { animation: timerPulse 1s infinite; }
 
-        @keyframes rpcPop {
-            0% { transform: scale(0.3) rotate(-8deg); opacity: 0; }
-            60% { transform: scale(1.05) rotate(2deg); opacity: 1; }
+        /* Hiệu ứng Gamification Mở Khóa */
+        @keyframes popScale {
+            0% { transform: scale(0.4) rotate(-10deg); opacity: 0; }
+            70% { transform: scale(1.08) rotate(3deg); opacity: 1; }
             100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
-        @keyframes goldGlow {
-            0%, 100% { box-shadow: 0 0 30px rgba(234, 179, 8, 0.7), inset 0 0 20px rgba(251, 191, 36, 0.5); }
-            50% { box-shadow: 0 0 60px rgba(250, 204, 21, 0.95), inset 0 0 35px rgba(254, 240, 138, 0.8); }
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 25px rgba(251, 191, 36, 0.6), 0 0 50px rgba(99, 102, 241, 0.4); }
+            50% { box-shadow: 0 0 45px rgba(251, 191, 36, 0.9), 0 0 80px rgba(139, 92, 246, 0.7); }
         }
-        .rpc-popup-anim { animation: rpcPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-        .rpc-gold-border { animation: goldGlow 2.2s infinite; }
+        .animate-pop-badge { animation: popScale 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .animate-glow-gold { animation: glowPulse 2s infinite; }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
@@ -80,10 +81,12 @@
                 <!-- User Profile & Stats Widget -->
                 <div class="flex items-center gap-3">
                     <div id="user-profile-container" class="flex items-center gap-2">
+                        <!-- Nút hiển thị tên học sinh hoặc đăng nhập -->
                         <div id="user-profile-badge" class="flex items-center gap-2 cursor-pointer bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold transition" onclick="App.handleProfileClick()">
                             <i class="fa-solid fa-user-circle text-indigo-600 text-base"></i>
                             <span id="header-user-name">Đăng Nhập / Đăng Ký</span>
                         </div>
+                        <!-- Nút Đăng Xuất -->
                         <button id="btn-header-logout" onclick="AuthModule.logout()" class="hidden flex items-center gap-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-xl font-bold text-xs transition" title="Đăng xuất tài khoản">
                             <i class="fa-solid fa-right-from-bracket"></i>
                             <span class="hidden sm:inline">Đăng xuất</span>
@@ -129,9 +132,10 @@
                 </div>
             </div>
 
-            <!-- LEVEL PROGRESS WIDGET -->
+            <!-- WIDGET 1: HIỂN THỊ TIẾN ĐỘ THĂNG CẤP (LEVEL PROGRESS) -->
             <div class="glass-card rounded-3xl p-6 border-2 border-indigo-100 shadow-sm bg-gradient-to-br from-white via-indigo-50/30 to-amber-50/20">
                 <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                    <!-- Thông tin Level & Danh xưng hiện tại -->
                     <div class="flex items-center gap-4">
                         <div class="relative">
                             <div id="dash-rank-icon-box" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 text-white flex flex-col items-center justify-center shadow-lg shadow-amber-200/60">
@@ -156,6 +160,7 @@
                         </div>
                     </div>
 
+                    <!-- Thanh tiến trình XP chi tiết -->
                     <div class="w-full lg:w-1/2 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-inner space-y-2.5">
                         <div class="flex justify-between items-end">
                             <div>
@@ -170,6 +175,7 @@
                             <span id="dash-level-percent" class="text-lg font-black text-indigo-600">0%</span>
                         </div>
 
+                        <!-- Progress Bar -->
                         <div class="w-full bg-slate-100 rounded-full h-3.5 overflow-hidden p-0.5 border border-slate-200/60">
                             <div id="dash-level-progress-bar" class="bg-gradient-to-r from-indigo-500 via-violet-500 to-amber-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                         </div>
@@ -221,6 +227,7 @@
                 </div>
             </div>
 
+            <!-- CÁC CARD THỐNG KÊ GỐC -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg"><i class="fa-solid fa-circle-check"></i></div>
@@ -263,6 +270,7 @@
                 <div id="grade-selector-tabs" class="flex flex-wrap gap-1 bg-slate-200/70 p-1 rounded-2xl max-w-full overflow-x-auto"></div>
             </div>
 
+            <!-- Mode Selection Options -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div onclick="App.setMode('free')" id="mode-card-free" class="cursor-pointer border-2 border-indigo-600 bg-indigo-50/50 p-4 rounded-2xl flex items-center gap-4 transition">
                     <div class="w-12 h-12 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xl font-bold shadow-md">
@@ -285,6 +293,7 @@
                 </div>
             </div>
 
+            <!-- Topics Grid -->
             <div>
                 <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-list-check text-indigo-600"></i> Các dạng toán thuộc <span id="current-selected-grade-label" class="text-indigo-600">Lớp 1</span>
@@ -484,9 +493,10 @@
             </div>
         </section>
 
-        <!-- VIEW 6: HALL OF FAME (ĐẠI SẢNH VINH DANH & LỊCH SỬ DANH HIỆU - GIAO DIỆN SÁNG, DỄ NHÌN) -->
+        <!-- VIEW 6: HALL OF FAME (ĐẠI SẢNH VINH DANH & LỊCH SỬ DANH HIỆU) -->
         <section id="view-achievements" class="view-section hidden space-y-8">
-            <div class="rounded-3xl bg-gradient-to-r from-indigo-900 via-indigo-950 to-slate-900 text-white p-6 sm:p-10 shadow-xl relative overflow-hidden border border-amber-500/30">
+            <!-- Banner Hall of Fame -->
+            <div class="rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 sm:p-10 shadow-xl relative overflow-hidden border border-amber-500/30">
                 <div class="absolute right-4 top-2 opacity-10 pointer-events-none text-[180px] text-amber-400">
                     <i class="fa-solid fa-trophy"></i>
                 </div>
@@ -506,7 +516,7 @@
                 </div>
             </div>
 
-            <!-- BỘ SƯU TẬP 10 DANH XƯNG (NỀN SÁNG, CHỮ RÕ RÀNG, DỄ BẤM) -->
+            <!-- 1. BỘ SƯU TẬP 10 DANH XƯNG (MỞ KHÓA & BÓNG MỜ) -->
             <div class="space-y-4">
                 <div class="flex items-center justify-between">
                     <h2 class="text-lg font-extrabold text-slate-800 flex items-center gap-2">
@@ -517,8 +527,8 @@
                 <div id="honor-titles-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4"></div>
             </div>
 
-            <!-- LỊCH SỬ DANH HIỆU ĐẠT ĐƯỢC -->
-            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+            <!-- 2. LỊCH SỬ DANH HIỆU ĐẠT ĐƯỢC (LƯU TRONG FIRESTORE DATABASE) -->
+            <div class="glass-card rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
                     <div>
                         <h2 class="text-lg font-extrabold text-slate-800 flex items-center gap-2">
@@ -546,7 +556,7 @@
                 </div>
             </div>
 
-            <!-- HUY HIỆU THÀNH TÍCH ĐẶC BIỆT -->
+            <!-- 3. BỘ HUY HIỆU THÀNH TÍCH ĐẶC BIỆT -->
             <div class="space-y-4">
                 <h2 class="text-lg font-extrabold text-slate-800 flex items-center gap-2">
                     <i class="fa-solid fa-medal text-indigo-600"></i> Huy Hiệu Thành Tích Luyện Tập
@@ -557,48 +567,43 @@
 
     </main>
 
-    <!-- MODAL HIỆU ỨNG MỞ KHÓA LEVEL / DANH XƯNG -->
-    <div id="celebration-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div id="celebration-card" class="bg-gradient-to-b from-amber-950 via-slate-900 to-indigo-950 text-white rounded-3xl p-6 sm:p-8 max-w-md w-full text-center space-y-6 shadow-2xl border-4 border-amber-400 rpc-popup-anim rpc-gold-border relative overflow-hidden">
-            <button onclick="GamificationEngine.toggleSound()" id="btn-toggle-sound" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-amber-300 flex items-center justify-center text-sm transition border border-amber-400/40" title="Bật/Tắt âm thanh">
+    <!-- MODAL HIỆU ỨNG MỞ KHÓA LEVEL / DANH XƯNG / HUY HIỆU -->
+    <div id="celebration-modal" class="hidden fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div id="celebration-card" class="bg-white rounded-3xl p-8 max-w-md w-full text-center space-y-5 shadow-2xl border-2 border-amber-300 relative overflow-hidden animate-pop-badge animate-glow-gold">
+            <!-- Nút bật/tắt âm thanh hiệu ứng -->
+            <button onclick="GamificationEngine.toggleSound()" id="btn-toggle-sound" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm transition" title="Bật/Tắt âm thanh chúc mừng">
                 <i class="fa-solid fa-volume-high"></i>
             </button>
 
-            <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-5xl text-amber-400 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
-                👑
+            <div id="celebration-tag" class="inline-block bg-amber-100 text-amber-800 text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-widest">
+                THĂNG CẤP THÀNH CÔNG!
             </div>
 
-            <div class="pt-4">
-                <span id="celebration-tag" class="inline-block bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-black text-xs px-4 py-1.5 rounded-full uppercase tracking-widest shadow-md">
-                    LEVEL UP!
-                </span>
-            </div>
-
-            <div class="flex justify-center my-2">
-                <div class="relative w-32 h-32 rounded-3xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-orange-600 p-1 shadow-2xl flex items-center justify-center">
-                    <div class="w-full h-full bg-gradient-to-b from-red-900 to-indigo-950 rounded-[22px] flex items-center justify-center border-2 border-amber-300/60 relative overflow-hidden">
-                        <div id="celebration-icon-display" class="text-6xl drop-shadow-md">🏆</div>
-                    </div>
+            <!-- Biểu tượng lớn ở giữa màn hình -->
+            <div class="flex justify-center">
+                <div id="celebration-icon-circle" class="w-24 h-24 rounded-3xl bg-gradient-to-tr from-amber-400 via-yellow-400 to-orange-500 text-white flex items-center justify-center text-5xl shadow-xl">
+                    🎉
                 </div>
             </div>
 
-            <div class="space-y-2">
-                <h2 id="celebration-title" class="text-3xl font-black tracking-wide text-amber-300 drop-shadow">LEVEL 2</h2>
-                <p id="celebration-subtitle" class="text-sm font-bold text-indigo-200">Người Khai Phá Tri Thức</p>
-                <p id="celebration-desc" class="text-xs text-slate-300 px-4 leading-relaxed">Bạn đã xuất sắc vượt qua mốc thử thách và thăng hạng thành công!</p>
+            <div class="space-y-1.5">
+                <h2 id="celebration-title" class="text-2xl sm:text-3xl font-black text-slate-800">Level 2</h2>
+                <p id="celebration-subtitle" class="text-sm font-semibold text-indigo-600">Danh xưng: Người Khai Phá Tri Thức</p>
+                <p id="celebration-desc" class="text-xs text-slate-500 pt-1">Chúc mừng bạn đã tích lũy đủ XP và bước sang cấp độ mới!</p>
             </div>
 
             <div class="pt-2">
-                <button onclick="GamificationEngine.closeCelebration()" class="w-full py-4 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-base rounded-2xl shadow-xl transition transform active:scale-95 uppercase tracking-wider">
-                    Nhận Thưởng & Tiếp Tục
+                <button onclick="GamificationEngine.closeCelebration()" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-extrabold rounded-2xl shadow-lg transition">
+                    Tuyệt Vời! Tiếp Tục Chinh Phục
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- AUTH MODAL -->
+    <!-- AUTH MODAL (ĐĂNG NHẬP / ĐĂNG KÝ FIREBASE KẾT HỢP OTP EMAILJS) -->
     <div id="auth-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 max-w-sm w-full space-y-4 shadow-2xl">
+            <!-- Header Modal kèm nút Mũi tên quay lại ở góc trên bên trái -->
             <div class="relative flex items-center justify-center mb-2">
                 <button id="auth-back-btn" onclick="AuthModule.goBackToLogin()" class="hidden absolute left-0 text-slate-500 hover:text-indigo-600 p-1.5 rounded-xl hover:bg-slate-100 transition" title="Quay lại">
                     <i class="fa-solid fa-arrow-left text-lg"></i>
@@ -606,6 +611,7 @@
                 <h3 id="auth-modal-title" class="text-xl font-bold text-slate-800">Đăng Nhập Tài Khoản</h3>
             </div>
             
+            <!-- Form Đăng Nhập / Đăng Ký Thông Thường -->
             <div id="auth-form-inputs" class="space-y-3">
                 <div id="register-name-field" class="hidden">
                     <input type="text" id="auth-name" placeholder="Họ và tên học sinh..." class="w-full p-3 border rounded-xl text-sm outline-none">
@@ -613,15 +619,18 @@
                 <input type="email" id="auth-email" placeholder="Email của bạn..." class="w-full p-3 border rounded-xl text-sm outline-none">
                 <input type="password" id="auth-password" placeholder="Mật khẩu..." class="w-full p-3 border rounded-xl text-sm outline-none">
                 
+                <!-- Quên mật khẩu -->
                 <div id="forgot-password-link" class="text-right">
                     <button onclick="AuthModule.forgotPassword()" class="text-xs text-indigo-600 hover:underline font-semibold">Quên mật khẩu?</button>
                 </div>
             </div>
 
+            <!-- Khung Gửi Email Đặt Lại Mật Khẩu -->
             <div id="reset-password-section" class="hidden space-y-3 text-center">
                 <p class="text-xs text-slate-500">Nhập email tài khoản của bạn. Hệ thống sẽ gửi một liên kết đổi mật khẩu an toàn đến hộp thư của bạn.</p>
             </div>
 
+            <!-- Khung Nhập Mã OTP (Chỉ hiển thị ở Bước 2 Đăng Ký) -->
             <div id="otp-verify-section" class="hidden space-y-3 bg-indigo-50 p-4 rounded-2xl border border-indigo-200 text-center">
                 <p class="text-xs font-bold text-indigo-900">Mã OTP 6 số đã được gửi tới Email của bạn. Vui lòng kiểm tra hộp thư!</p>
                 <input type="text" id="auth-otp-input" maxlength="6" placeholder="Nhập mã 6 số..." class="w-full p-3 text-center tracking-widest text-xl font-extrabold border rounded-xl outline-none bg-white">
@@ -655,6 +664,7 @@
             getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // Cấu hình Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyA9dxXmIbEd__0EjaI7kqFNlT18_gwrlA4",
             authDomain: "mathmaster-app-64474.firebaseapp.com",
@@ -669,6 +679,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // --- HỆ THỐNG 10 DANH XƯNG (100 LEVEL) ---
         const HonorTitles = [
             { id: 'title_1', minLv: 1, maxLv: 10, name: 'Người Khai Phá Tri Thức', shortName: 'Người Khai Phá', emoji: '🔑' },
             { id: 'title_2', minLv: 11, maxLv: 20, name: 'Nhà Thám Hiểm Toán Học', shortName: 'Nhà Thám Hiểm', emoji: '🧭' },
@@ -690,12 +701,14 @@
             { id: 'accuracy_80', title: 'Chính Xác Tuyệt Đối', desc: 'Đạt tỷ lệ đúng trên 80% (tối thiểu 10 bài)', icon: 'fa-bullseye', color: 'text-emerald-500', emoji: '🎯' }
         ];
 
+        // --- GAMIFICATION ENGINE (TIẾN ĐỘ, LỊCH SỬ, HIỆU ỨNG MỞ KHÓA) ---
         window.GamificationEngine = {
             soundEnabled: true,
             celebrationQueue: [],
             isShowingModal: false,
 
             getXpForLevel(lv) {
+                // Mỗi level cần 50 * lv XP để thăng cấp (Lv 1->2 cần 50 XP, Lv 2->3 cần 100 XP...)
                 return Math.min(lv, 100) * 50;
             },
 
@@ -738,30 +751,30 @@
                 return `${pad(dateObj.getDate())}/${pad(dateObj.getMonth() + 1)}/${dateObj.getFullYear()} ${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}`;
             },
 
-            playFanfare(isMajor = false) {
+            playFanfare(isMajorTitle = false) {
                 if (!this.soundEnabled) return;
                 try {
                     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                    const notes = isMajor ? [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98] : [523.25, 659.25, 783.99];
+                    const notes = isMajorTitle ? [523.25, 659.25, 783.99, 1046.50, 1318.51] : [523.25, 659.25, 783.99];
                     notes.forEach((freq, idx) => {
                         const osc = ctx.createOscillator();
                         const gain = ctx.createGain();
-                        osc.type = isMajor ? 'triangle' : 'sine';
-                        osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.1);
-                        gain.gain.setValueAtTime(0.2, ctx.currentTime + idx * 0.1);
-                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.1 + 0.5);
+                        osc.type = isMajorTitle ? 'triangle' : 'sine';
+                        osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.11);
+                        gain.gain.setValueAtTime(0.15, ctx.currentTime + idx * 0.11);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.11 + 0.45);
                         osc.connect(gain);
                         gain.connect(ctx.destination);
-                        osc.start(ctx.currentTime + idx * 0.1);
-                        osc.stop(ctx.currentTime + idx * 0.1 + 0.5);
+                        osc.start(ctx.currentTime + idx * 0.11);
+                        osc.stop(ctx.currentTime + idx * 0.11 + 0.45);
                     });
-                } catch (e) {}
+                } catch (e) { /* Ignore audio policy block */ }
             },
 
             toggleSound() {
                 this.soundEnabled = !this.soundEnabled;
                 const btn = document.getElementById('btn-toggle-sound');
-                btn.innerHTML = this.soundEnabled ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark text-rose-400"></i>';
+                btn.innerHTML = this.soundEnabled ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark text-rose-500"></i>';
             },
 
             queueCelebration(item) {
@@ -782,39 +795,48 @@
                 const modal = document.getElementById('celebration-modal');
                 const card = document.getElementById('celebration-card');
                 const tag = document.getElementById('celebration-tag');
-                const iconDisplay = document.getElementById('celebration-icon-display');
+                const iconCircle = document.getElementById('celebration-icon-circle');
                 const title = document.getElementById('celebration-title');
                 const subtitle = document.getElementById('celebration-subtitle');
                 const desc = document.getElementById('celebration-desc');
 
-                card.classList.remove('rpc-popup-anim');
+                // Reset animation
+                card.classList.remove('animate-pop-badge');
                 void card.offsetWidth;
-                card.classList.add('rpc-popup-anim');
+                card.classList.add('animate-pop-badge');
 
                 if (item.type === 'title') {
+                    // Hiệu ứng đặc biệt nổi bật khi đạt Danh xưng mới
+                    tag.className = 'inline-block bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-black px-4 py-1 rounded-full uppercase tracking-widest shadow';
                     tag.innerText = '👑 MỞ KHÓA DANH XƯNG MỚI!';
-                    iconDisplay.innerText = item.emoji;
+                    iconCircle.className = 'w-28 h-28 rounded-full bg-gradient-to-tr from-amber-400 via-yellow-300 to-orange-500 text-white flex items-center justify-center text-6xl shadow-2xl border-4 border-white';
+                    iconCircle.innerText = item.emoji;
                     title.innerText = item.title;
-                    subtitle.innerText = `Cột mốc ${item.rangeText}`;
+                    subtitle.innerText = `Chinh phục cột mốc ${item.rangeText}`;
                     desc.innerText = item.desc;
                     this.playFanfare(true);
-                    confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 } });
+                    confetti({ particleCount: 130, spread: 90, origin: { y: 0.55 } });
                 } else if (item.type === 'badge') {
-                    tag.innerText = '🏅 HUY HIỆU VINH DANH!';
-                    iconDisplay.innerText = item.emoji;
+                    tag.className = 'inline-block bg-purple-100 text-purple-800 text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-widest';
+                    tag.innerText = '🏅 HUY HIỆU THÀNH TÍCH MỚI!';
+                    iconCircle.className = 'w-24 h-24 rounded-3xl bg-gradient-to-tr from-purple-500 to-indigo-600 text-white flex items-center justify-center text-5xl shadow-xl';
+                    iconCircle.innerText = item.emoji;
                     title.innerText = item.title;
                     subtitle.innerText = 'Cột mốc luyện tập xuất sắc';
                     desc.innerText = item.desc;
                     this.playFanfare(false);
-                    confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });
+                    confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 } });
                 } else {
-                    tag.innerText = '⚡ LEVEL UP!';
-                    iconDisplay.innerText = `Lv.${item.level}`;
-                    title.innerText = `LEVEL ${item.level}`;
-                    subtitle.innerText = `Danh xưng: ${item.rankName}`;
-                    desc.innerText = `Bạn vừa nhận được +${item.xpEarned} XP từ bài luyện tập thành công!`;
+                    // Hiệu ứng Lên Level
+                    tag.className = 'inline-block bg-indigo-100 text-indigo-800 text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-widest';
+                    tag.innerText = '⚡ THĂNG CẤP LEVEL MỚI!';
+                    iconCircle.className = 'w-24 h-24 rounded-3xl bg-gradient-to-tr from-indigo-500 to-violet-600 text-white flex flex-col items-center justify-center shadow-xl';
+                    iconCircle.innerHTML = `<span class="text-[11px] font-bold uppercase">LEVEL</span><span class="text-4xl font-black leading-none">${item.level}</span>`;
+                    title.innerText = `Chúc Mừng Lên Level ${item.level}!`;
+                    subtitle.innerText = `Danh xưng hiện tại: ${item.rankName}`;
+                    desc.innerText = `Bạn vừa nhận được +${item.xpEarned} XP. Tiếp tục giải toán để chạm mốc tiếp theo!`;
                     this.playFanfare(false);
-                    confetti({ particleCount: 80, spread: 70, origin: { y: 0.5 } });
+                    confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
                 }
 
                 modal.classList.remove('hidden');
@@ -822,10 +844,11 @@
 
             closeCelebration() {
                 document.getElementById('celebration-modal').classList.add('hidden');
-                setTimeout(() => this.showNextCelebration(), 200);
+                setTimeout(() => this.showNextCelebration(), 220);
             }
         };
 
+        // --- DATABASE & AUTH CONTROLLER ---
         window.CloudDB = {
             currentUser: null,
             userData: {
@@ -854,7 +877,9 @@
                     if (user) {
                         this.currentUser = user;
                         const savedName = localStorage.getItem('mathmaster_username_' + user.uid);
-                        if (savedName) this.userData.name = savedName;
+                        if (savedName) {
+                            this.userData.name = savedName;
+                        }
 
                         try {
                             const userRef = doc(db, "users", user.uid);
@@ -868,13 +893,35 @@
                                     unlockedTitles: fetched.unlockedTitles || ['title_1'],
                                     titleHistory: fetched.titleHistory || this.userData.titleHistory
                                 };
+                                // Đồng bộ lại level chuẩn theo XP
                                 const calc = GamificationEngine.calculateLevelState(this.userData.xp || 0);
                                 this.userData.level = calc.level;
-                                if (this.userData.name) localStorage.setItem('mathmaster_username_' + user.uid, this.userData.name);
+                                if (this.userData.name) {
+                                    localStorage.setItem('mathmaster_username_' + user.uid, this.userData.name);
+                                }
                             }
-                        } catch (err) {}
+                        } catch (err) {
+                            console.warn("Firestore offline mode fallback active:", err);
+                        }
                     } else {
                         this.currentUser = null;
+                        this.userData = {
+                            name: '', xp: 0, level: 1, streak: 1,
+                            totalSolved: 0, correctSolved: 0, bestStreak: 1,
+                            topicStats: {},
+                            badges: ['welcome'],
+                            unlockedTitles: ['title_1'],
+                            titleHistory: [
+                                {
+                                    id: 'title_1',
+                                    type: 'Danh xưng',
+                                    name: 'Người Khai Phá Tri Thức',
+                                    emoji: '🔑',
+                                    achievedAt: 'Khởi đầu hành trình',
+                                    milestone: 'Level 1 (0 XP)'
+                                }
+                            ]
+                        };
                     }
                     callback(user);
                 });
@@ -887,7 +934,9 @@
                             this.uploadedExams = data.exams || [];
                         }
                     });
-                } catch (e) {}
+                } catch (e) {
+                    console.warn("System content snapshot offline.");
+                }
             },
 
             async saveProgress(topicId, isCorrect, xpEarned) {
@@ -907,6 +956,7 @@
                 this.userData.level = newState.level;
                 const nowStr = GamificationEngine.formatDateTime();
 
+                // 1. Kiểm tra thăng cấp Level
                 if (newState.level > prevLevel) {
                     GamificationEngine.queueCelebration({
                         type: 'level',
@@ -916,6 +966,7 @@
                     });
                 }
 
+                // 2. Kiểm tra mở khóa Danh xưng mới (10 Danh xưng)
                 const earnedTitle = newState.currentTitle;
                 if (!this.userData.unlockedTitles.includes(earnedTitle.id)) {
                     this.userData.unlockedTitles.push(earnedTitle.id);
@@ -933,10 +984,11 @@
                         title: earnedTitle.name,
                         emoji: earnedTitle.emoji,
                         rangeText: `Level ${earnedTitle.minLv}–${earnedTitle.maxLv}`,
-                        desc: `Bạn đã chính thức mở khóa Danh xưng hoàng gia "${earnedTitle.name}" tại Đại Sảnh Vinh Danh!`
+                        desc: `Bạn đã chính thức bước vào hàng ngũ ${earnedTitle.name} tại Đại Sảnh Vinh Danh!`
                     });
                 }
 
+                // 3. Kiểm tra mở khóa Huy hiệu thành tích
                 const total = this.userData.totalSolved;
                 const correct = this.userData.correctSolved;
                 const acc = total > 0 ? Math.round((correct / total) * 100) : 0;
@@ -982,26 +1034,38 @@
                         unlockedTitles: this.userData.unlockedTitles,
                         titleHistory: this.userData.titleHistory
                     });
-                } catch (err) {}
+                } catch (err) {
+                    console.warn("Could not sync progress to Firestore due to network/offline status.");
+                }
             }
         };
+
+        // --- AUTH MODULE ---
+        let isRegisterMode = false;
+        let isResetPasswordMode = false;
+        let generatedOtp = null;
+        let pendingRegisterData = null;
 
         window.AuthModule = {
             goBackToLogin() {
                 document.getElementById('reset-password-section').classList.add('hidden');
                 document.getElementById('otp-verify-section').classList.add('hidden');
                 document.getElementById('auth-back-btn').classList.add('hidden');
+
                 document.getElementById('auth-form-inputs').classList.remove('hidden');
                 document.getElementById('forgot-password-link').classList.remove('hidden');
                 document.getElementById('register-name-field').classList.add('hidden');
                 document.getElementById('auth-password').style.display = 'block';
+                
                 isRegisterMode = false;
                 isResetPasswordMode = false;
                 document.getElementById('auth-modal-title').innerText = 'Đăng Nhập Tài Khoản';
                 document.getElementById('btn-auth-submit').innerText = 'Đăng Nhập';
                 document.getElementById('btn-auth-submit').onclick = () => AuthModule.handleAuth();
+                document.getElementById('auth-switch-text').innerText = 'Chưa có tài khoản?';
+                document.getElementById('auth-switch-btn').innerText = 'Đăng ký ngay';
             },
-            toggleAuthMessage: () => {},
+
             toggleAuthMode() {
                 isRegisterMode = !isRegisterMode;
                 isResetPasswordMode = false;
@@ -1014,7 +1078,19 @@
                 document.getElementById('register-name-field').classList.toggle('hidden', !isRegisterMode);
                 document.getElementById('otp-verify-section').classList.add('hidden');
                 document.getElementById('btn-auth-submit').innerText = isRegisterMode ? 'Gửi Mã Xác Thực OTP' : 'Đăng Nhập';
+                document.getElementById('btn-auth-submit').onclick = () => AuthModule.handleAuth();
+                
+                const switchText = document.getElementById('auth-switch-text');
+                const switchBtn = document.getElementById('auth-switch-btn');
+                if (isRegisterMode) {
+                    switchText.innerText = 'Đã có tài khoản?';
+                    switchBtn.innerText = 'Đăng nhập ngay';
+                } else {
+                    switchText.innerText = 'Chưa có tài khoản?';
+                    switchBtn.innerText = 'Đăng ký ngay';
+                }
             },
+
             forgotPassword() {
                 isResetPasswordMode = true;
                 document.getElementById('auth-form-inputs').classList.remove('hidden');
@@ -1022,77 +1098,161 @@
                 document.getElementById('forgot-password-link').classList.add('hidden');
                 document.getElementById('reset-password-section').classList.remove('hidden');
                 document.getElementById('auth-back-btn').classList.remove('hidden');
+                
                 document.getElementById('auth-modal-title').innerText = 'Quên Mật Khẩu';
                 document.getElementById('btn-auth-submit').innerText = 'Gửi Link Đặt Lại Mật Khẩu';
                 document.getElementById('btn-auth-submit').onclick = () => AuthModule.submitResetPassword();
             },
+
             async submitResetPassword() {
                 const email = document.getElementById('auth-email').value.trim();
-                if (!email) return alert("Vui lòng nhập email tài khoản!");
+
+                if (!email) {
+                    return alert("Vui lòng nhập email tài khoản của bạn vào ô email!");
+                }
+
                 try {
                     await sendPasswordResetEmail(auth, email);
-                    alert("🎉 Đã gửi link đặt lại mật khẩu tới " + email);
+                    alert("🎉 Hệ thống đã gửi liên kết đặt lại mật khẩu đến email: " + email + ". Vui lòng kiểm tra hộp thư (cả mục Spam nếu cần)!");
                     document.getElementById('auth-password').style.display = 'block';
                     AuthModule.goBackToLogin();
-                } catch (e) { alert("Lỗi: " + e.message); }
+                } catch (error) {
+                    alert("Lỗi gửi email đặt lại mật khẩu: " + error.message);
+                }
             },
+
             async handleAuth() {
                 const email = document.getElementById('auth-email').value.trim();
                 const password = document.getElementById('auth-password').value;
                 const name = document.getElementById('auth-name').value.trim();
-                if (!email || !password) return alert("Vui lòng điền đủ thông tin!");
 
+                if (!email || !password) return alert("Vui lòng điền đầy đủ email và mật khẩu!");
+
+                // 1. XỬ LÝ ĐĂNG NHẬP
                 if (!isRegisterMode) {
                     try {
-                        const res = await signInWithEmailAndPassword(auth, email, password);
-                        const userDoc = await getDoc(doc(db, "users", res.user.uid));
-                        if (userDoc.exists()) CloudDB.userData = { ...CloudDB.userData, ...userDoc.data() };
-                        if (!CloudDB.userData.name) CloudDB.userData.name = email.split('@')[0];
-                        alert("🎉 Đăng nhập thành công!");
+                        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                        
+                        try {
+                            const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+                            if (userDoc.exists()) {
+                                CloudDB.userData = { ...CloudDB.userData, ...userDoc.data() };
+                                if (CloudDB.userData.name) {
+                                    localStorage.setItem('mathmaster_username_' + userCredential.user.uid, CloudDB.userData.name);
+                                }
+                            }
+                        } catch (firestoreErr) {
+                            console.warn("Không thể tải document từ Firestore.");
+                        }
+
+                        if (!CloudDB.userData.name) {
+                            CloudDB.userData.name = email.split('@')[0];
+                        }
+
+                        alert("🎉 Đăng nhập thành công! Chào mừng " + CloudDB.userData.name);
                         document.getElementById('auth-modal').classList.add('hidden');
-                        App.updateHeaderStats(res.user);
+                        
+                        App.updateHeaderStats(userCredential.user);
                         App.renderDashboard();
-                    } catch (e) { alert("Lỗi đăng nhập: " + e.message); }
+                    } catch (error) {
+                        alert("Lỗi đăng nhập: " + error.message);
+                    }
                     return;
                 }
 
+                // 2. XỬ LÝ ĐĂNG KÝ - GỬI MÃ OTP QUA EMAILJS
                 const otpSection = document.getElementById('otp-verify-section');
-                if (otpSection.classList.contains('hidden')) {
+                const isOtpVisible = !otpSection.classList.contains('hidden');
+
+                if (!isOtpVisible) {
                     if (!name) return alert("Vui lòng nhập tên học sinh!");
+                    
                     generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
                     pendingRegisterData = { email, password, name };
+
+                    const templateParams = {
+                        to_name: name,
+                        to_email: email,
+                        otp_code: generatedOtp
+                    };
+
+                    const btn = document.getElementById('btn-auth-submit');
+                    btn.innerText = "Đang gửi mã OTP...";
+                    btn.disabled = true;
+
                     try {
-                        await emailjs.send('service_43l82sp', 'template_j5c7dzb', { to_name: name, to_email: email, otp_code: generatedOtp });
-                        alert("🎉 Đã gửi mã OTP tới " + email);
+                        await emailjs.send('service_43l82sp', 'template_j5c7dzb', templateParams);
+                        alert("🎉 Mã OTP 6 số đã được gửi thành công đến email: " + email);
                         otpSection.classList.remove('hidden');
                         document.getElementById('auth-form-inputs').classList.add('hidden');
                         document.getElementById('auth-back-btn').classList.remove('hidden');
-                    } catch (e) { alert("Lỗi gửi OTP: " + (e.text || JSON.stringify(e))); }
-                } else {
-                    if (document.getElementById('auth-otp-input').value.trim() !== generatedOtp) return alert("Mã OTP không chính xác!");
+                        btn.innerText = "Xác Nhận Đăng Ký";
+                        btn.disabled = false;
+                    } catch (error) {
+                        alert("Lỗi gửi email OTP: " + (error.text || JSON.stringify(error)));
+                        btn.innerText = "Gửi Mã Xác Thực OTP";
+                        btn.disabled = false;
+                    }
+                } 
+                // 3. XÁC NHẬN OTP & TẠO TÀI KHOẢN FIREBASE
+                else {
+                    const enteredOtp = document.getElementById('auth-otp-input').value.trim();
+                    if (enteredOtp !== generatedOtp) {
+                        return alert("❌ Mã OTP không chính xác! Vui lòng kiểm tra lại trong hộp thư email.");
+                    }
+
                     try {
                         const res = await createUserWithEmailAndPassword(auth, pendingRegisterData.email, pendingRegisterData.password);
                         const nowStr = GamificationEngine.formatDateTime();
                         const newUser = {
-                            name: pendingRegisterData.name, email: pendingRegisterData.email,
-                            xp: 0, level: 1, streak: 1, totalSolved: 0, correctSolved: 0, bestStreak: 1,
-                            topicStats: {}, badges: ['welcome'], unlockedTitles: ['title_1'],
-                            titleHistory: [{ id: 'title_1', type: 'Danh xưng', name: 'Người Khai Phá Tri Thức', emoji: '🔑', achievedAt: nowStr, milestone: 'Level 1 (0 XP)' }]
+                            name: pendingRegisterData.name, 
+                            email: pendingRegisterData.email, 
+                            xp: 0, level: 1, streak: 1, 
+                            totalSolved: 0, correctSolved: 0, 
+                            bestStreak: 1, topicStats: {},
+                            badges: ['welcome'],
+                            unlockedTitles: ['title_1'],
+                            titleHistory: [
+                                {
+                                    id: 'title_1',
+                                    type: 'Danh xưng',
+                                    name: 'Người Khai Phá Tri Thức',
+                                    emoji: '🔑',
+                                    achievedAt: nowStr,
+                                    milestone: 'Level 1 (0 XP)'
+                                }
+                            ]
                         };
-                        await setDoc(doc(db, "users", res.user.uid), newUser);
+                        
+                        try {
+                            await setDoc(doc(db, "users", res.user.uid), newUser);
+                        } catch (e) {
+                            console.warn("Không lưu được lên Firestore, chạy chế độ local.");
+                        }
+
                         CloudDB.userData = newUser;
-                        alert("🎉 Đăng ký thành công!");
+                        localStorage.setItem('mathmaster_username_' + res.user.uid, pendingRegisterData.name);
+
+                        alert("🎉 Đăng ký tài khoản thành công qua xác thực OTP!");
                         document.getElementById('auth-modal').classList.add('hidden');
                         App.updateHeaderStats(res.user);
                         App.renderDashboard();
-                    } catch (e) { alert("Lỗi đăng ký: " + e.message); }
+                    } catch (error) {
+                        alert("Lỗi tạo tài khoản Firebase: " + error.message);
+                    }
                 }
             },
+
             async logout() {
-                if (confirm("Đăng xuất tài khoản?")) { await signOut(auth); location.reload(); }
+                if (confirm("Bạn có muốn đăng xuất tài khoản không?")) {
+                    await signOut(auth);
+                    alert("Đã đăng xuất tài khoản thành công!");
+                    location.reload();
+                }
             }
         };
 
+        // --- MATH APP ENGINE ---
         const MathGenerator = {
             randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; },
             generators: {
@@ -1100,23 +1260,24 @@
                     const isAdd = Math.random() > 0.4;
                     if (isAdd) {
                         const a = MathGenerator.randInt(1, 10), b = MathGenerator.randInt(1, 10);
-                        return { question: `${a} + ${b} = ?`, answer: (a + b).toString(), options: MathGenerator.generateOptions(a + b), solution: `Lấy ${a} cộng thêm ${b} ta được ${a + b}.` };
+                        return { question: `${a} + ${b} = ?`, answer: (a + b).toString(), options: MathGenerator.generateOptions(a + b), solution: `Lấy ${a} cộng thêm ${b} đơn vị ta được ${a + b}.` };
                     } else {
                         const a = MathGenerator.randInt(5, 20), b = MathGenerator.randInt(1, a);
-                        return { question: `${a} - ${b} = ?`, answer: (a - b).toString(), options: MathGenerator.generateOptions(a - b), solution: `Lấy ${a} bớt đi ${b} ta được ${a - b}.` };
+                        return { question: `${a} - ${b} = ?`, answer: (a - b).toString(), options: MathGenerator.generateOptions(a - b), solution: `Lấy ${a} bớt đi ${b} đơn vị còn lại ${a - b}.` };
                     }
                 },
                 'g1_compare': () => {
                     const a = MathGenerator.randInt(1, 50), b = MathGenerator.randInt(1, 50);
-                    return { question: `Điền dấu thích hợp: ${a}  ___  ${b}`, options: ['>', '<', '='], answer: a > b ? '>' : (a < b ? '<' : '='), solution: `Số ${a} ${a > b ? 'lớn hơn' : (a < b ? 'nhỏ hơn' : 'bằng')} số ${b}.` };
+                    const ans = a > b ? '>' : (a < b ? '<' : '=');
+                    return { question: `Điền dấu thích hợp: ${a}  ___  ${b}`, options: ['>', '<', '='], answer: ans, solution: `Số ${a} ${a > b ? 'lớn hơn' : (a < b ? 'nhỏ hơn' : 'bằng')} số ${b}.` };
                 },
                 'g2_mental_mul': () => {
                     const a = MathGenerator.randInt(2, 5), b = MathGenerator.randInt(1, 10);
-                    return { question: `${a} × ${b} = ?`, answer: (a * b).toString(), options: MathGenerator.generateOptions(a * b), solution: `Bảng nhân ${a}: ${a} × ${b} = ${a * b}.` };
+                    return { question: `${a} × ${b} = ?`, answer: (a * b).toString(), options: MathGenerator.generateOptions(a * b), solution: `Bảng cửu chương ${a}: ${a} nhân ${b} bằng ${a * b}.` };
                 },
                 'g6_integers': () => {
                     const a = MathGenerator.randInt(-20, -1), b = MathGenerator.randInt(5, 25), ans = a + b;
-                    return { question: `Tính: (${a}) + ${b} = ?`, answer: ans.toString(), options: MathGenerator.generateOptions(ans), solution: `Cộng hai số nguyên: ${ans}.` };
+                    return { question: `Tính giá trị biểu thức: (${a}) + ${b} = ?`, answer: ans.toString(), options: MathGenerator.generateOptions(ans), solution: `Cộng hai số nguyên trái dấu: ${ans}.` };
                 }
             },
             generateOptions(correct) {
@@ -1131,12 +1292,12 @@
         };
 
         const DefaultTheoryData = {
-            'g1_add_sub': { title: 'Cộng Trừ Cơ Bản (Phạm vi 20)', practiceTime: 30, hint: 'Dùng ngón tay đếm tiến lùi.', def: 'Phép cộng gộp và phép trừ bớt.', tips: 'Nhẩm nhanh qua số tròn chục.', ex: '5 + 4 = 9.' },
-            'g1_compare': { title: 'So Sánh Số (>, <, =)', practiceTime: 30, hint: 'So sánh hàng chục trước.', def: 'So sánh giá trị tự nhiên.', tips: 'So từ trái qua phải.', ex: '15 < 23.' }
+            'g1_add_sub': { title: 'Cộng Trừ Cơ Bản (Phạm vi 20)', practiceTime: 30, hint: 'Dùng ngón tay hoặc đếm tiến/lùi.', def: 'Phép cộng gộp hai nhóm số lại với nhau.', tips: 'Dùng ngón tay đếm tiến/lùi.', ex: '5 + 4 = 9.' },
+            'g1_compare': { title: 'So Sánh Số (>, <, =)', practiceTime: 30, hint: 'So sánh chữ số ở hàng chục trước.', def: 'So sánh giá trị số tự nhiên.', tips: 'So sánh từ hàng cao tới thấp.', ex: '15 < 23.' }
         };
 
         const DefaultExamsData = [
-            { id: 'ex_101', grade: 1, title: 'Đề Kiểm Tra Định Kỳ Lớp 1 - Phép Cộng Trừ', duration: 30, fileName: 'De_Kiem_Tra_Lop_1.pdf', topicId: 'g1_add_sub' }
+            { id: 'ex_101', grade: 1, title: 'Đề Kiểm Tra Định Kỳ Lớp 1 - Chuyên Đề Phép Cộng Trừ', duration: 30, fileName: 'De_Kiem_Tra_Lop_1_AddSub.pdf', topicId: 'g1_add_sub' }
         ];
 
         window.App = {
@@ -1183,32 +1344,41 @@
             },
 
             updateHeaderStats(user) {
-                const badge = document.getElementById('user-profile-badge');
+                const badge = document.getElementById('header-user-name');
                 const logoutBtn = document.getElementById('btn-header-logout');
+
                 if (user) {
-                    const studentName = CloudDB.userData.name || user.email.split('@')[0];
-                    badge.innerHTML = `<i class="fa-solid fa-user-circle text-indigo-600 text-base"></i><span class="text-indigo-700 font-extrabold">${studentName}</span>`;
+                    const studentName = CloudDB.userData.name || localStorage.getItem('mathmaster_username_' + user.uid) || user.email.split('@')[0];
+                    badge.innerHTML = `<span class="text-indigo-700 font-extrabold">${studentName}</span>`;
                     logoutBtn.classList.remove('hidden');
                 } else {
-                    badge.innerHTML = `<i class="fa-solid fa-user-circle text-indigo-600 text-base"></i><span>Đăng Nhập / Đăng Ký</span>`;
+                    badge.innerHTML = 'Đăng Nhập / Đăng Ký';
                     logoutBtn.classList.add('hidden');
                 }
+
                 const lvState = GamificationEngine.calculateLevelState(CloudDB.userData.xp || 0);
                 document.getElementById('user-streak-display').innerText = CloudDB.userData.streak || 1;
                 document.getElementById('user-level-display').innerText = lvState.level;
                 document.getElementById('user-xp-display').innerText = `${lvState.totalXp.toLocaleString('vi-VN')} XP`;
             },
 
-            toggleAuthModal() {
+            toggleAuthModal() { 
                 if (!CloudDB.currentUser) {
                     AuthModule.goBackToLogin();
-                    document.getElementById('auth-modal').classList.toggle('hidden');
+                    document.getElementById('auth-modal').classList.toggle('hidden'); 
                 }
             },
-            handleProfileClick() { if (!CloudDB.currentUser) this.toggleAuthModal(); },
+
+            handleProfileClick() {
+                if (!CloudDB.currentUser) {
+                    this.toggleAuthModal();
+                }
+            },
 
             renderDashboard() {
                 const lvState = GamificationEngine.calculateLevelState(CloudDB.userData.xp || 0);
+
+                // Cập nhật Widget Tiến Độ Thăng Cấp
                 document.getElementById('dash-current-level').innerText = lvState.level;
                 document.getElementById('dash-rank-emoji').innerText = lvState.currentTitle.emoji;
                 document.getElementById('dash-rank-name').innerText = lvState.currentTitle.name;
@@ -1217,7 +1387,7 @@
                 if (lvState.nextTitle) {
                     document.getElementById('dash-next-rank-hint').innerText = `Đạt Level ${lvState.nextTitle.minLv} để mở khóa "${lvState.nextTitle.name}"`;
                 } else {
-                    document.getElementById('dash-next-rank-hint').innerText = `Bạn đã đạt đỉnh cao tối cao!`;
+                    document.getElementById('dash-next-rank-hint').innerText = `Bạn đã đạt đến danh xưng cao quý nhất MathMaster!`;
                 }
 
                 document.getElementById('dash-xp-in-level').innerText = `${lvState.xpInLevel.toLocaleString('vi-VN')} XP`;
@@ -1225,14 +1395,17 @@
                 document.getElementById('dash-total-xp').innerText = lvState.totalXp.toLocaleString('vi-VN');
                 document.getElementById('dash-level-percent').innerText = `${lvState.percent}%`;
                 document.getElementById('dash-level-progress-bar').style.width = `${lvState.percent}%`;
-                document.getElementById('dash-next-level-label').innerText = lvState.level < 100 ? `Level ${lvState.level + 1}` : 'Max';
+                document.getElementById('dash-next-level-label').innerText = lvState.level < 100 ? `Level ${lvState.level + 1}` : 'Max Level';
                 document.getElementById('dash-xp-remaining').innerText = `${lvState.missingXp.toLocaleString('vi-VN')} XP`;
 
+                // Cập nhật 4 thẻ thống kê
                 document.getElementById('dash-total-solved').innerText = CloudDB.userData.totalSolved || 0;
                 const total = CloudDB.userData.totalSolved || 0;
                 const correct = CloudDB.userData.correctSolved || 0;
-                document.getElementById('dash-accuracy').innerText = `${total > 0 ? Math.round((correct / total) * 100) : 0}%`;
-                document.getElementById('dash-badge-count').innerText = `${(CloudDB.userData.unlockedTitles || []).length}/10`;
+                const acc = total > 0 ? Math.round((correct / total) * 100) : 0;
+                document.getElementById('dash-accuracy').innerText = `${acc}%`;
+                const unlockedTitlesCount = (CloudDB.userData.unlockedTitles || ['title_1']).length;
+                document.getElementById('dash-badge-count').innerText = `${unlockedTitlesCount}/${HonorTitles.length}`;
                 document.getElementById('dash-best-streak').innerText = CloudDB.userData.bestStreak || 1;
             },
 
@@ -1243,67 +1416,125 @@
                 this.navigateTo('practice-select');
             },
 
-            startQuickPractice(t) { t === 'primary' ? this.selectGrade(1) : this.selectGrade(6); },
+            startQuickPractice(levelType) {
+                if (levelType === 'primary') this.selectGrade(1);
+                else this.selectGrade(6);
+            },
 
             renderGradeTabs() {
                 const container = document.getElementById('grade-selector-tabs');
                 let html = '';
                 for (let g = 1; g <= 9; g++) {
-                    html += `<button onclick="App.changeGradeTab(${g})" class="grade-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${g === this.currentGrade ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-indigo-600'}">Lớp ${g}</button>`;
+                    html += `
+                        <button onclick="App.changeGradeTab(${g})" class="grade-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${g === this.currentGrade ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-indigo-600'}">
+                            Lớp ${g}
+                        </button>
+                    `;
                 }
                 container.innerHTML = html;
             },
 
-            changeGradeTab(g) {
-                this.currentGrade = g;
-                const topics = this.gradeTopics[g];
+            changeGradeTab(grade) {
+                this.currentGrade = grade;
+                const topics = this.gradeTopics[grade];
                 if (topics && topics.length > 0) this.currentTopic = topics[0].id;
                 this.renderPracticeSelect();
             },
 
             setMode(mode) {
                 this.currentMode = mode;
-                document.getElementById('mode-card-free').className = mode === 'free' ? 'cursor-pointer border-2 border-indigo-600 bg-indigo-50/50 p-4 rounded-2xl flex items-center gap-4 transition' : 'cursor-pointer border-2 border-slate-200 hover:border-indigo-300 p-4 rounded-2xl flex items-center gap-4 transition';
-                document.getElementById('mode-card-test').className = mode === 'test' ? 'cursor-pointer border-2 border-indigo-600 bg-indigo-50/50 p-4 rounded-2xl flex items-center gap-4 transition' : 'cursor-pointer border-2 border-slate-200 hover:border-indigo-300 p-4 rounded-2xl flex items-center gap-4 transition';
+                const freeCard = document.getElementById('mode-card-free');
+                const testCard = document.getElementById('mode-card-test');
+                if (mode === 'free') {
+                    freeCard.className = 'cursor-pointer border-2 border-indigo-600 bg-indigo-50/50 p-4 rounded-2xl flex items-center gap-4 transition';
+                    testCard.className = 'cursor-pointer border-2 border-slate-200 hover:border-indigo-300 p-4 rounded-2xl flex items-center gap-4 transition';
+                }
             },
 
             openExamList() {
                 this.setMode('test');
                 document.getElementById('exam-grade-badge').innerText = `Đề Thi Lớp ${this.currentGrade}`;
-                const exams = (CloudDB.uploadedExams.length > 0 ? CloudDB.uploadedExams : DefaultExamsData).filter(e => e.grade === this.currentGrade);
-                document.getElementById('uploaded-exams-container').innerHTML = exams.length === 0 ? `<div class="text-center py-10 text-slate-400">Chưa có đề thi nào cho Lớp ${this.currentGrade}</div>` : exams.map(ex => `
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 flex justify-between items-center">
-                        <div><h4 class="font-bold text-slate-800">${ex.title}</h4><span class="text-xs text-slate-500">${ex.duration} phút • ${ex.fileName}</span></div>
-                        <button onclick="App.startExamTest('${ex.id}', ${ex.duration}, '${ex.topicId || 'g1_add_sub'}')" class="px-4 py-2 bg-rose-600 text-white font-bold rounded-xl text-xs">Làm Bài</button>
-                    </div>
-                `).join('');
+                
+                const allExams = CloudDB.uploadedExams.length > 0 ? CloudDB.uploadedExams : DefaultExamsData;
+                const gradeExams = allExams.filter(e => e.grade === this.currentGrade);
+
+                const container = document.getElementById('uploaded-exams-container');
+
+                if (gradeExams.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-10 bg-slate-50 rounded-2xl border border-slate-200 text-slate-500 space-y-2">
+                            <i class="fa-solid fa-folder-open text-4xl text-slate-300"></i>
+                            <p class="text-sm font-semibold">Chưa có đề kiểm tra nào cho Lớp ${this.currentGrade} từ Cloud Database.</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = gradeExams.map(ex => `
+                        <div class="exam-card bg-white p-5 rounded-2xl border border-slate-200 hover:border-rose-400 hover:shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl font-bold shadow-sm">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                </div>
+                                <div class="space-y-0.5">
+                                    <h4 class="font-bold text-slate-800 text-base">${ex.title}</h4>
+                                    <div class="flex items-center gap-3 text-xs text-slate-500 font-semibold">
+                                        <span><i class="fa-solid fa-clock text-amber-500 mr-1"></i>${ex.duration} phút</span>
+                                        <span>•</span>
+                                        <span><i class="fa-solid fa-paperclip text-slate-400 mr-1"></i>${ex.fileName}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="App.startExamTest('${ex.id}', ${ex.duration}, '${ex.topicId || 'g1_add_sub'}')" class="w-full sm:w-auto px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-play"></i> Bắt Đầu Làm Bài
+                            </button>
+                        </div>
+                    `).join('');
+                }
+
                 this.navigateTo('exam-list');
             },
 
-            startExamTest(id, dur, topId) {
-                this.currentTopic = topId;
+            startExamTest(examId, durationMinutes, topicId) {
+                this.currentTopic = topicId;
                 this.navigateTo('practice-room');
-                this.startTimer(dur * 60, 'Hết giờ làm bài kiểm tra!');
+                document.getElementById('practice-grade-badge').innerText = `Thi Lớp ${this.currentGrade}`;
+                this.startTimer(durationMinutes * 60, `Hết ${durationMinutes} phút làm bài kiểm tra!`);
                 this.loadNextQuestion();
             },
 
             renderPracticeSelect() {
                 this.renderGradeTabs();
                 document.getElementById('current-selected-grade-label').innerText = `Lớp ${this.currentGrade}`;
+                
                 const grid = document.getElementById('topics-grid');
                 const topics = this.gradeTopics[this.currentGrade] || [];
+                
+                if (topics.length === 0) {
+                    grid.innerHTML = `<div class="col-span-3 text-center text-slate-400 py-6">Đang cập nhật bài tập cho khối lớp này...</div>`;
+                    return;
+                }
+
                 grid.innerHTML = topics.map(t => {
-                    const title = CloudDB.adminTheory[t.id]?.title || t.name;
-                    const solved = CloudDB.userData.topicStats?.[t.id]?.solved || 0;
+                    const customTitle = CloudDB.adminTheory[t.id]?.title || t.name;
+                    const solvedCount = CloudDB.userData.topicStats?.[t.id]?.solved || 0;
+
                     return `
-                        <div class="topic-card bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-500 flex flex-col justify-between space-y-4">
+                        <div class="topic-card bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-500 hover:shadow-md flex flex-col justify-between space-y-4">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><i class="fa-solid ${t.icon}"></i></div>
-                                <div><h4 class="font-bold text-slate-800 text-sm">${title}</h4><span class="text-xs text-slate-400">Đã làm: ${solved} bài</span></div>
+                                <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg">
+                                    <i class="fa-solid ${t.icon}"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 text-sm">${customTitle}</h4>
+                                    <span class="text-xs text-slate-400">Đã làm: ${solvedCount} bài</span>
+                                </div>
                             </div>
                             <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
-                                <button onclick="App.openTheory('${t.id}')" class="py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold"><i class="fa-solid fa-book mr-1"></i> Lý thuyết</button>
-                                <button onclick="App.startPractice('${t.id}')" class="py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold"><i class="fa-solid fa-play mr-1"></i> Luyện tập</button>
+                                <button onclick="App.openTheory('${t.id}')" class="py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-book text-indigo-600"></i> Lý thuyết
+                                </button>
+                                <button onclick="App.startPractice('${t.id}')" class="py-2 px-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Luyện tập
+                                </button>
                             </div>
                         </div>
                     `;
@@ -1312,32 +1543,42 @@
 
             openTheory(topicId) {
                 this.currentTopic = topicId;
-                const theory = CloudDB.adminTheory[topicId] || DefaultTheoryData[topicId] || {};
+                const theory = CloudDB.adminTheory[topicId] || DefaultTheoryData[topicId] || { title: 'Lý thuyết toán' };
+                
                 document.getElementById('theory-grade-badge').innerText = `Lớp ${this.currentGrade}`;
-                document.getElementById('theory-title').innerText = theory.title || 'Lý thuyết';
+                document.getElementById('theory-title').innerText = theory.title;
                 this.navigateTo('theory');
             },
 
             openTheoryDetail(sectionType) {
                 const theory = CloudDB.adminTheory[this.currentTopic] || DefaultTheoryData[this.currentTopic] || {};
-                document.getElementById('theory-detail-topic-badge').innerText = theory.title || 'Lý thuyết';
+
+                document.getElementById('theory-detail-topic-badge').innerText = theory.title || `Lớp ${this.currentGrade}`;
+                
                 const container = document.getElementById('theory-detail-container');
                 const titleEl = document.getElementById('theory-detail-section-title');
                 const contentEl = document.getElementById('theory-detail-content');
 
                 if (sectionType === 'def') {
                     container.className = "p-6 rounded-2xl space-y-3 bg-indigo-50 border border-indigo-200";
-                    titleEl.innerHTML = `<i class="fa-solid fa-book-bookmark text-indigo-600"></i> Định nghĩa & Công thức`;
-                    contentEl.innerText = theory.def || 'Đang cập nhật...';
+                    titleEl.className = "text-xl font-bold flex items-center gap-2 text-indigo-900";
+                    titleEl.innerHTML = `<i class="fa-solid fa-book-bookmark text-indigo-600"></i> Định nghĩa & Công thức trọng tâm`;
+                    contentEl.className = "text-base font-medium leading-relaxed pt-3 border-t border-indigo-200 text-indigo-950";
+                    contentEl.innerText = theory.def || "Chưa có dữ liệu định nghĩa.";
                 } else if (sectionType === 'tips') {
                     container.className = "p-6 rounded-2xl space-y-3 bg-amber-50 border border-amber-200";
-                    titleEl.innerHTML = `<i class="fa-solid fa-lightbulb text-amber-500"></i> Mẹo tính toán nhanh`;
-                    contentEl.innerText = theory.tips || 'Đang cập nhật...';
-                } else {
+                    titleEl.className = "text-xl font-bold flex items-center gap-2 text-amber-900";
+                    titleEl.innerHTML = `<i class="fa-solid fa-lightbulb text-amber-500"></i> Mẹo tính toán & Lưu ý quan trọng`;
+                    contentEl.className = "text-base font-medium leading-relaxed pt-3 border-t border-amber-200 text-amber-950";
+                    contentEl.innerText = theory.tips || "Chưa có dữ liệu mẹo tính toán.";
+                } else if (sectionType === 'ex') {
                     container.className = "p-6 rounded-2xl space-y-3 bg-emerald-50 border border-emerald-200";
-                    titleEl.innerHTML = `<i class="fa-solid fa-pencil text-emerald-600"></i> Ví dụ minh họa`;
-                    contentEl.innerText = theory.ex || 'Đang cập nhật...';
+                    titleEl.className = "text-xl font-bold flex items-center gap-2 text-emerald-900";
+                    titleEl.innerHTML = `<i class="fa-solid fa-pencil text-emerald-600"></i> Ví dụ mẫu minh họa`;
+                    contentEl.className = "text-base font-medium leading-relaxed pt-3 border-t border-emerald-200 text-emerald-950";
+                    contentEl.innerText = theory.ex || "Chưa có ví dụ minh họa.";
                 }
+
                 this.navigateTo('theory-detail');
             },
 
@@ -1345,22 +1586,33 @@
                 this.currentTopic = topicId;
                 this.navigateTo('practice-room');
                 document.getElementById('practice-grade-badge').innerText = `Lớp ${this.currentGrade}`;
-                const tData = CloudDB.adminTheory[topicId] || DefaultTheoryData[topicId] || {};
-                this.startTimer(tData.practiceTime || 30, 'Hết thời gian!');
+
+                const topicData = CloudDB.adminTheory[topicId] || DefaultTheoryData[topicId] || {};
+                const pTime = topicData.practiceTime || 30;
+                this.startTimer(pTime, 'Hết thời gian cho câu hỏi này!');
+
                 this.loadNextQuestion();
             },
 
-            startTimer(seconds, msg) {
+            startTimer(seconds, timeUpMsg) {
                 this.timerSeconds = seconds;
                 document.getElementById('timer-counter').innerText = this.timerSeconds;
                 clearInterval(this.timerInterval);
+                
                 this.timerInterval = setInterval(() => {
                     this.timerSeconds--;
                     document.getElementById('timer-counter').innerText = this.timerSeconds;
+                    
+                    if (this.timerSeconds <= 5) document.getElementById('timer-box').classList.add('timer-warning');
+                    
                     if (this.timerSeconds <= 0) {
                         clearInterval(this.timerInterval);
-                        alert(msg);
-                        this.nextQuestion();
+                        alert(timeUpMsg);
+                        if (this.currentMode === 'free') {
+                            this.nextQuestion();
+                        } else {
+                            this.exitPractice();
+                        }
                     }
                 }, 1000);
             },
@@ -1372,108 +1624,198 @@
                 document.getElementById('btn-next-question').classList.add('hidden');
 
                 if (this.currentMode === 'free') {
-                    const tData = CloudDB.adminTheory[this.currentTopic] || DefaultTheoryData[this.currentTopic] || {};
-                    this.startTimer(tData.practiceTime || 30, 'Hết thời gian!');
+                    const topicData = CloudDB.adminTheory[this.currentTopic] || DefaultTheoryData[this.currentTopic] || {};
+                    const pTime = topicData.practiceTime || 30;
+                    this.startTimer(pTime, 'Hết thời gian cho câu hỏi này!');
                 }
 
                 this.currentQuestion = MathGenerator.generate(this.currentTopic);
                 document.getElementById('question-text').innerText = this.currentQuestion.question;
-                document.getElementById('answer-container').innerHTML = `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${this.currentQuestion.options.map(opt => `<button onclick="App.selectOption(this, '${opt}')" class="option-btn p-4 border-2 border-slate-200 hover:border-indigo-400 rounded-2xl font-bold text-slate-700 text-base">${opt}</button>`).join('')}</div>`;
+
+                const container = document.getElementById('answer-container');
+                if (this.currentQuestion.options) {
+                    container.innerHTML = `
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            ${this.currentQuestion.options.map(opt => `
+                                <button onclick="App.selectOption(this, '${opt}')" class="option-btn p-4 border-2 border-slate-200 hover:border-indigo-400 rounded-2xl font-bold text-slate-700 text-base text-center transition">
+                                    ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+                    `;
+                }
             },
 
             selectedAnswer: null,
-            selectOption(btn, val) {
-                document.querySelectorAll('.option-btn').forEach(b => { b.classList.remove('border-indigo-600', 'bg-indigo-50', 'text-indigo-700'); b.classList.add('border-slate-200'); });
-                btn.classList.remove('border-slate-200');
-                btn.classList.add('border-indigo-600', 'bg-indigo-50', 'text-indigo-700');
+            selectOption(btnEl, val) {
+                document.querySelectorAll('.option-btn').forEach(b => {
+                    b.classList.remove('border-indigo-600', 'bg-indigo-50', 'text-indigo-700');
+                    b.classList.add('border-slate-200');
+                });
+                btnEl.classList.remove('border-slate-200');
+                btnEl.classList.add('border-indigo-600', 'bg-indigo-50', 'text-indigo-700');
                 this.selectedAnswer = val;
             },
 
             async checkAnswer() {
-                if (!this.selectedAnswer) return alert("Vui lòng chọn đáp án!");
+                if (!this.selectedAnswer) return alert("Vui lòng chọn một đáp án!");
+                
                 clearInterval(this.timerInterval);
+
                 const isCorrect = (this.selectedAnswer === this.currentQuestion.answer);
-                if (isCorrect) confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+
+                if (isCorrect) {
+                    confetti({ particleCount: 60, spread: 60, origin: { y: 0.7 } });
+                }
+
                 await CloudDB.saveProgress(this.currentTopic, isCorrect, 10);
 
                 document.getElementById('solution-text').innerText = this.currentQuestion.solution;
                 document.getElementById('solution-box').classList.remove('hidden');
                 document.getElementById('btn-submit-answer').classList.add('hidden');
                 document.getElementById('btn-next-question').classList.remove('hidden');
+
                 this.updateHeaderStats(CloudDB.currentUser);
             },
 
-            nextQuestion() { this.selectedAnswer = null; this.loadNextQuestion(); },
+            nextQuestion() {
+                this.selectedAnswer = null;
+                this.loadNextQuestion();
+            },
+
             toggleHint() {
                 const box = document.getElementById('hint-box');
-                const tData = CloudDB.adminTheory[this.currentTopic] || DefaultTheoryData[this.currentTopic] || {};
-                document.getElementById('hint-text').innerText = tData.hint || 'Hãy tính toán kỹ lưỡng!';
+                const topicData = CloudDB.adminTheory[this.currentTopic] || DefaultTheoryData[this.currentTopic] || {};
+                document.getElementById('hint-text').innerText = topicData.hint || 'Hãy quan sát kỹ phép tính và áp dụng các công thức đã học!';
                 box.classList.toggle('hidden');
             },
-            exitPractice() { clearInterval(this.timerInterval); this.navigateTo('practice-select'); },
+
+            exitPractice() {
+                clearInterval(this.timerInterval);
+                document.getElementById('timer-box').classList.remove('timer-warning');
+                this.navigateTo('practice-select');
+            },
 
             renderStats() {
                 document.getElementById('stats-solved-count').innerText = CloudDB.userData.totalSolved || 0;
                 document.getElementById('stats-correct-count').innerText = CloudDB.userData.correctSolved || 0;
-                const t = CloudDB.userData.totalSolved || 0, c = CloudDB.userData.correctSolved || 0;
-                document.getElementById('stats-accuracy-rate').innerText = `${t > 0 ? Math.round((c / t) * 100) : 0}%`;
+                const total = CloudDB.userData.totalSolved || 0;
+                const correct = CloudDB.userData.correctSolved || 0;
+                const acc = total > 0 ? Math.round((correct / total) * 100) : 0;
+                document.getElementById('stats-accuracy-rate').innerText = `${acc}%`;
 
-                document.getElementById('stats-grade-breakdown').innerHTML = [1,2,3,4,5,6,7,8,9].map(g => {
-                    let s = 0, cor = 0;
-                    (this.gradeTopics[g] || []).forEach(tp => {
-                        const st = CloudDB.userData.topicStats?.[tp.id];
-                        if (st) { s += st.solved; cor += st.correct; }
+                const breakdown = document.getElementById('stats-grade-breakdown');
+                let html = '';
+                for (let g = 1; g <= 9; g++) {
+                    const topics = this.gradeTopics[g] || [];
+                    let gradeSolved = 0, gradeCorrect = 0;
+                    topics.forEach(t => {
+                        const st = CloudDB.userData.topicStats?.[t.id];
+                        if (st) { gradeSolved += st.solved; gradeCorrect += st.correct; }
                     });
-                    const pct = s > 0 ? Math.round((cor / s) * 100) : 0;
-                    return `<div class="space-y-1"><div class="flex justify-between text-xs font-bold text-slate-700"><span>Lớp ${g}</span><span>${s} bài (${pct}%)</span></div><div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden"><div class="bg-indigo-600 h-2.5 rounded-full" style="width: ${pct}%"></div></div></div>`;
-                }).join('');
+                    const pct = gradeSolved > 0 ? Math.round((gradeCorrect / gradeSolved) * 100) : 0;
+                    html += `
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-bold text-slate-700">
+                                <span>Khối Lớp ${g}</span>
+                                <span>${gradeSolved} bài (${pct}% đúng)</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                                <div class="bg-indigo-600 h-2.5 rounded-full" style="width: ${pct}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }
+                breakdown.innerHTML = html;
             },
 
             renderAchievements() {
-                const unlocked = CloudDB.userData.unlockedTitles || ['title_1'];
-                const history = CloudDB.userData.titleHistory || [];
+                const unlockedTitles = CloudDB.userData.unlockedTitles || ['title_1'];
+                const historyList = CloudDB.userData.titleHistory || [];
 
-                document.getElementById('hof-unlocked-count').innerText = unlocked.length;
-                document.getElementById('hof-unlocked-emojis').innerText = HonorTitles.filter(t => unlocked.includes(t.id)).map(t => t.emoji).join(' ');
+                // 1. Cập nhật Banner Hall of Fame
+                document.getElementById('hof-unlocked-count').innerText = unlockedTitles.length;
+                const unlockedEmojis = HonorTitles
+                    .filter(t => unlockedTitles.includes(t.id))
+                    .map(t => t.emoji)
+                    .join(' ');
+                document.getElementById('hof-unlocked-emojis').innerText = unlockedEmojis || '🔑';
 
-                // RENDER BỘ SƯU TẬP 10 DANH XƯNG (Nền sáng, chữ sắc nét, tương tác mượt mà)
-                document.getElementById('honor-titles-grid').innerHTML = HonorTitles.map(t => {
-                    const isOk = unlocked.includes(t.id);
-                    if (isOk) {
+                // 2. Render Bộ Sưu Tập 10 Danh Xưng (Có trạng thái mở khóa vs bóng mờ/ổ khóa)
+                const titlesGrid = document.getElementById('honor-titles-grid');
+                titlesGrid.innerHTML = HonorTitles.map(t => {
+                    const isUnlocked = unlockedTitles.includes(t.id);
+                    const record = historyList.find(h => h.id === t.id);
+
+                    if (isUnlocked) {
                         return `
-                            <div class="bg-white p-5 rounded-2xl border-2 border-amber-400 shadow-md text-center space-y-2 relative hover:scale-105 transition">
-                                <div class="text-4xl">${t.emoji}</div>
-                                <div><h4 class="font-extrabold text-slate-800 text-sm">${t.shortName}</h4><span class="inline-block text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full mt-1">Lv.${t.minLv}–${t.maxLv}</span></div>
-                                <div class="pt-1 border-t border-amber-100"><span class="text-[10px] font-extrabold text-emerald-600"><i class="fa-solid fa-circle-check"></i> Đã mở khóa</span></div>
+                            <div class="bg-gradient-to-b from-amber-50/90 to-white p-4 rounded-2xl border-2 border-amber-300 shadow-sm text-center space-y-2 relative overflow-hidden">
+                                <div class="text-3xl sm:text-4xl">${t.emoji}</div>
+                                <div>
+                                    <h4 class="font-extrabold text-slate-800 text-xs sm:text-sm leading-snug">${t.shortName}</h4>
+                                    <span class="inline-block text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full mt-1">Lv.${t.minLv}–${t.maxLv}</span>
+                                </div>
+                                <div class="pt-1 border-t border-amber-100">
+                                    <span class="text-[10px] font-extrabold text-emerald-600 uppercase"><i class="fa-solid fa-circle-check mr-0.5"></i> Đã đạt</span>
+                                    ${record ? `<div class="text-[10px] text-slate-400 mt-0.5">${record.achievedAt.split(' ')[0]}</div>` : ''}
+                                </div>
                             </div>
                         `;
                     } else {
                         return `
-                            <div class="bg-white/80 p-5 rounded-2xl border border-slate-200 text-center space-y-2 opacity-75">
-                                <div class="text-4xl text-slate-300">🔒</div>
-                                <div><h4 class="font-bold text-slate-600 text-sm">${t.shortName}</h4><span class="inline-block text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full mt-1">Yêu cầu Lv.${t.minLv}</span></div>
-                                <div class="pt-1 border-t border-slate-100"><span class="text-[10px] font-bold text-slate-400">Chưa đạt</span></div>
+                            <div class="bg-slate-100/80 p-4 rounded-2xl border border-slate-200 text-center space-y-2 opacity-65 select-none">
+                                <div class="text-3xl sm:text-4xl grayscale opacity-50">🔒</div>
+                                <div>
+                                    <h4 class="font-bold text-slate-500 text-xs sm:text-sm leading-snug">${t.shortName}</h4>
+                                    <span class="inline-block text-[10px] font-semibold text-slate-400 bg-slate-200/70 px-2 py-0.5 rounded-full mt-1">Yêu cầu Lv.${t.minLv}</span>
+                                </div>
+                                <div class="pt-1 border-t border-slate-200/70">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase">Chưa mở khóa</span>
+                                </div>
                             </div>
                         `;
                     }
                 }).join('');
 
-                document.getElementById('title-history-tbody').innerHTML = history.length === 0 ? `<tr><td colspan="4" class="text-center py-4 text-slate-400">Chưa có lịch sử</td></tr>` : history.map(item => `
-                    <tr class="hover:bg-slate-50">
-                        <td class="py-3 px-3 font-bold text-slate-800 flex items-center gap-2"><span class="text-xl">${item.emoji || '🏅'}</span>${item.name}</td>
-                        <td class="py-3 px-3"><span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${item.type === 'Danh xưng' ? 'bg-amber-100 text-amber-800' : 'bg-indigo-50 text-indigo-700'}">${item.type}</span></td>
-                        <td class="py-3 px-3 text-xs text-slate-600">${item.milestone}</td>
-                        <td class="py-3 px-3 text-right text-xs font-mono font-bold text-slate-500">${item.achievedAt}</td>
-                    </tr>
-                `).join('');
+                // 3. Render Lịch Sử Danh Hiệu Đạt Được
+                const tbody = document.getElementById('title-history-tbody');
+                if (historyList.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-400 text-xs">Chưa có dữ liệu lịch sử danh hiệu.</td></tr>`;
+                } else {
+                    tbody.innerHTML = historyList.map(item => `
+                        <tr class="hover:bg-slate-50/80 transition">
+                            <td class="py-3.5 px-3 font-bold text-slate-800 flex items-center gap-2.5">
+                                <span class="text-xl">${item.emoji || '🏅'}</span>
+                                <span>${item.name}</span>
+                            </td>
+                            <td class="py-3.5 px-3">
+                                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${item.type === 'Danh xưng' ? 'bg-amber-100 text-amber-800' : 'bg-indigo-50 text-indigo-700'}">
+                                    ${item.type || 'Danh hiệu'}
+                                </span>
+                            </td>
+                            <td class="py-3.5 px-3 text-xs font-semibold text-slate-600">${item.milestone || '-'}</td>
+                            <td class="py-3.5 px-3 text-right text-xs font-mono font-bold text-slate-500">${item.achievedAt}</td>
+                        </tr>
+                    `).join('');
+                }
 
+                // 4. Render Huy Hiệu Thành Tích Luyện Tập
+                const container = document.getElementById('badges-grid');
                 const userBadges = CloudDB.userData.badges || ['welcome'];
-                document.getElementById('badges-grid').innerHTML = Badges.map(b => {
-                    const ok = userBadges.includes(b.id);
+                container.innerHTML = Badges.map(b => {
+                    const unlocked = userBadges.includes(b.id);
                     return `
-                        <div class="bg-white p-5 rounded-2xl border ${ok ? 'border-amber-300 shadow-sm' : 'border-slate-200 opacity-60'} flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl ${ok ? 'bg-amber-100' : 'bg-slate-100'} flex items-center justify-center text-2xl ${b.color}"><i class="fa-solid ${b.icon}"></i></div>
-                            <div><h4 class="font-bold text-slate-800 text-sm">${b.title}</h4><p class="text-xs text-slate-500">${b.desc}</p><span class="text-[10px] font-extrabold uppercase ${ok ? 'text-amber-600' : 'text-slate-400'}">${ok ? 'Đã đạt' : 'Chưa đạt'}</span></div>
+                        <div class="bg-white p-5 rounded-2xl border ${unlocked ? 'border-amber-300 shadow-sm' : 'border-slate-200 opacity-60'} flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl ${unlocked ? 'bg-amber-100' : 'bg-slate-100'} flex items-center justify-center text-2xl ${b.color}">
+                                <i class="fa-solid ${b.icon}"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">${b.title}</h4>
+                                <p class="text-xs text-slate-500">${b.desc}</p>
+                                <span class="text-[10px] font-extrabold uppercase tracking-wider ${unlocked ? 'text-amber-600' : 'text-slate-400'}">
+                                    ${unlocked ? 'Đã mở khóa' : 'Chưa đạt'}
+                                </span>
+                            </div>
                         </div>
                     `;
                 }).join('');
