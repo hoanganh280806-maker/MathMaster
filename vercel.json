@@ -1,5 +1,5 @@
 {
   "routes": [
-    { "src": "/", "destination": "/indexuser1.html" }
+    { "src": "/", "destination": "/indexuser2.html" }
   ]
 }
